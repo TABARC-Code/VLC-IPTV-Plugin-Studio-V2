@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "repository": "TABARC-Code/VLC-IPTV-Plugin-Studio-V2",
+  "timezone": "Europe/London",
+  "stages": {
+    "1": {
+      "status": "completed",
+      "due_at": "2026-10-14T17:47:00+01:00",
+      "completed_at": "2026-10-14T19:07:02+01:00",
+      "version": "1.4.8",
+      "commit": "aba6d1830b555cd8dae3bc43a927d132bb772cd3",
+      "change": "Prevent M3U export from overwriting the loaded channel database through common path spelling aliases.",
+      "validation": {
+        "baseline_regression": "Source overwrite reproduced against v1.4.7 before the fix.",
+        "lua_syntax": "Passed with Lua 5.1.",
+        "native_regression_scenarios": 18,
+        "example_csv_validation": "Passed.",
+        "linux_installer_upgrade_test": "Passed; existing CSV preserved, previous extension backed up, path containing spaces covered.",
+        "actions": {
+          "run_id": 38611211427,
+          "conclusion": "success",
+          "url": "https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/actions/runs/38611211427"
+        },
+        "release_url": "https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/releases/tag/v1.4.8",
+        "zip": {
+          "name": "iptv-channel-player-native-v1.4.8.zip",
+          "size_bytes": 55948,
+          "sha256": "b83e5f6fc2583b5746f94fb9e763f4bf5a5bda11b478ba493654cc9515c6cf17",
+          "release_metadata_verified": true,
+          "independent_download_crc_verified": false,
+          "download_note": "Independent download check was interrupted; no downloaded ZIP was available to inspect."
+        }
+      },
+      "limitations": [
+        "Path comparisons do not resolve every symbolic-link or mount alias; use a separate output filename.",
+        "Windows path semantics were regression-tested, but Windows and macOS desktop installation were not tested in this pass.",
+        "No remote stream playback validation was performed."
+      ]
+    },
+    "2": {
+      "status": "pending",
+      "due_at": "2026-10-14T20:47:00+01:00"
+    }
+  }
+}
