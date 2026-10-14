@@ -25,6 +25,8 @@ Button callbacks load/reload CSV, refresh filters, play/queue selected rows, que
 | IPTV.filter(rows, query, group, show_disabled) | Return original row indices using literal search |
 | IPTV.m3u(rows) | Return extended M3U text and enabled record count |
 | IPTV.write_m3u(path, content, allow_replace) | Write a new export or back up/replace an existing file; return success/detail |
+| IPTV.path_key(path, windows) | Normalise dot segments and path separators; apply Windows-style case comparison when requested |
+| IPTV.same_path(left, right) | Use VLC's URI helper to resolve relative paths when available, then compare normalised path keys |
 
 ID uniqueness and mandatory field checks precede a successful reload. CSV source files are never changed by these helpers. Search is bounded by input size; the native list has a separate display cap. M3U replacement uses a same-directory temporary file, backup and attempted rollback. These operations assume one writer; they are not a database transaction system.
 

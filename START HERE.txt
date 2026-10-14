@@ -1,4 +1,4 @@
-IPTV Channel Player V2 | TABARC-Code | v1.4.7
+IPTV Channel Player V2 | TABARC-Code | v1.4.8
 
 1. Install desktop VLC 3 from https://www.videolan.org/vlc/.
 2. Extract the whole ZIP and close VLC.

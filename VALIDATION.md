@@ -2,7 +2,7 @@
 
 ## Automated checks
 
-The native Lua source passed a Lua 5.1 syntax check and 16 regression scenarios, including VLC’s restricted descriptor scan, CSV quoting/BOM/CRLF handling, invalid rows, disabled records, filtering, playlist calls, preserved data after a failed reload, first-launch notice and export recovery. Packaged examples were parsed by the same implementation.
+The 1.4.8 Lua source passed a Lua 5.1 syntax check and 18 regression scenarios, including VLC’s restricted descriptor scan, CSV quoting/BOM/CRLF handling, invalid rows, disabled records, filtering, playlist calls, preserved data after a failed reload, first-launch notice, source-path alias protection and export recovery. Packaged examples were parsed by the same implementation. The path tests include Windows-style comparisons; they do not establish Windows desktop support.
 
 The Linux installer was tested in a temporary user data directory containing spaces. Reinstallation preserved the user’s CSV, backed up the old script and installed the branding and instructions. Shell launchers passed syntax checks.
 

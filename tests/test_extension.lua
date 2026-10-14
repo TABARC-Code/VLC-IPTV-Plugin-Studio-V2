@@ -166,6 +166,32 @@ test("failed final rename rolls back the original", function()
     assert(not ok)
     local f = assert(io.open(out)); assert(f:read("*a") == "original"); f:close()
 end)
+test("export cannot replace the loaded source through a dot-segment alias", function()
+    local source = tmp .. "/protected-source.m3u"
+    write(source, data)
+    widgets["input:2:2"].text = source
+    load_csv()
+    for _, alias in ipairs({tmp .. "/./protected-source.m3u", tmp .. "/../" .. tmp:match("([^/]+)$") .. "/protected-source.m3u"}) do
+        widgets["input:2:6"].text = alias
+        export_m3u()
+        export_m3u()
+        local file = assert(io.open(source, "rb"))
+        assert(file:read("*a") == data, "Export replaced the loaded channel database through an alias")
+        file:close()
+    end
+end)
+test("path keys compare separators, dot segments and Windows drive casing", function()
+    assert(IPTV.path_key("/tmp/child/../source.m3u", false) == "/tmp/source.m3u")
+    assert(IPTV.path_key("C:\\Lists\\child\\..\\Source.m3u", true) == IPTV.path_key("c:/lists/source.m3u", true))
+    assert(IPTV.path_key("/tmp/Source.m3u", false) ~= IPTV.path_key("/tmp/source.m3u", false))
+    assert(IPTV.path_key("//server/share/./file.m3u", true) == "//server/share/file.m3u")
+    vlc.strings = {make_uri = function(path)
+        return path:sub(1, 1) == "/" and ("file://" .. path) or ("file:///fixture/" .. path)
+    end}
+    assert(IPTV.same_path("source.m3u", "/fixture/./source.m3u"))
+    assert(not IPTV.same_path("source.m3u", "/fixture/other.m3u"))
+    vlc.strings = nil
+end)
 test("help notice and clean deactivation", function()
     show_help()
     assert(widgets["html:1:9"].text:find("Do not misuse", 1, true))

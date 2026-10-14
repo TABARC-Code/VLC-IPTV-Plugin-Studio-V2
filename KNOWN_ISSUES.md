@@ -8,5 +8,6 @@
 - Lua’s stock rename behaviour can fail on some Windows non-ASCII paths. Export recovery is attempted; backup files may need manual recovery if the filesystem refuses both renames.
 - Installers back up the script before updates, but installation of the complete assets set is not transactional.
 - Exports assume a single writer. A future locking scheme needs cross-platform behaviour checked before it is added.
+- Source-path comparison normalises common spelling aliases, but does not resolve all symbolic-link or mount aliases. Choose a separate output filename from your channel database.
 
 Prioritise confirmed defects and measurable friction. A longer feature list is not a performance result.
