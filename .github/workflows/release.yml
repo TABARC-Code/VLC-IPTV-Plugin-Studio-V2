@@ -1,0 +1,51 @@
+name: Native extension checks and release
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: native-release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Lua test runtime
+        run: sudo apt-get update && sudo apt-get install -y lua5.1
+      - name: Check source and samples
+        run: |
+          luac5.1 -p iptv-channel-player.lua
+          lua5.1 tools/validate_examples.lua .
+          sh -n install-unix.sh 'Install macOS.command'
+      - name: Regression tests
+        run: |
+          test_dir=$(mktemp -d)
+          lua5.1 tests/test_extension.lua . "$test_dir"
+          python -m unittest discover -s tests -v
+      - name: Publish immutable versioned ZIP
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          version=$(tr -d '\r\n' < VERSION)
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo 'VERSION must contain a semantic version, such as 1.4.7' >&2
+            exit 1
+          fi
+          if gh release view "v$version" >/dev/null 2>&1; then
+            echo "Release v$version already exists; its tag and ZIP will be left intact."
+            exit 0
+          fi
+          asset="$RUNNER_TEMP/iptv-channel-player-native-v$version.zip"
+          git archive --format=zip --prefix=iptv-channel-player-v2/ HEAD > "$asset"
+          gh release create "v$version" "$asset" --target "$GITHUB_SHA" \
+            --title "IPTV Channel Player V2 — v$version" \
+            --notes "Native VLC 3 Lua extension with CSV loading, filters, playback, queueing and M3U export. Extract the ZIP and read START HERE.txt. No Python runtime is required. Users supply authorised streams. See VALIDATION.md for platform and playback limits, and CHANGELOG.md for actual changes."

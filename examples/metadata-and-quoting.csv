@@ -1,0 +1,3 @@
+id,name,group,country,language,stream_url,logo_url,tvg_id,enabled
+world-01,"News, International",News,GB,en,https://example.org/world.m3u8,https://example.org/logo.png,example.world,false
+kids-02,"The ""Cartoon"" Channel",Cartoons,,,https://example.org/kids.m3u8,,,false

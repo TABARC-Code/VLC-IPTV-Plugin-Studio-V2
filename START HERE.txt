@@ -1,0 +1,13 @@
+IPTV Channel Player V2 | TABARC-Code | v1.4.7
+
+1. Install desktop VLC 3 from https://www.videolan.org/vlc/.
+2. Extract the whole ZIP and close VLC.
+3. Windows: double-click Install Windows.cmd.
+   macOS: double-click Install macOS.command, or use sh install-unix.sh in Terminal.
+   Linux: open Terminal here and run sh install-unix.sh.
+4. Restart VLC and open IPTV Channel Player V2 from View/Extensions.
+5. Edit the installed channels.csv with your authorised URLs, enable a row, save and reload.
+6. Select one channel and choose Play selected.
+
+No Python is required. The sample URLs do not play: they are disabled placeholders.
+Read README.md for complete installation, CSV, troubleshooting and usage instructions.
