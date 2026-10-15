@@ -38,8 +38,58 @@
       ]
     },
     "2": {
-      "status": "pending",
-      "due_at": "2026-10-14T20:47:00+01:00"
+      "status": "completed",
+      "due_at": "2026-10-14T20:47:00+01:00",
+      "review_completed_at": "2026-10-14T22:52:13+01:00",
+      "completed_at": "2026-10-15T13:02:26+01:00",
+      "reviewed_commit": "08d43319f61907362a9cdd715e8ae3f32079db48",
+      "version": "1.4.8",
+      "result": "Existing source references and guidance verified; no corrections warranted. Audit record only; no software release.",
+      "validation": {
+        "iptv_org": {
+          "license": "The Unlicense",
+          "license_url": "https://github.com/iptv-org/iptv/blob/master/LICENSE",
+          "readme_cc0_discrepancy": "Already accurately documented",
+          "archived": false,
+          "pushed_at": "2026-10-14T10:18:23Z",
+          "index_url": "https://github.com/iptv-org/iptv/blob/master/PLAYLISTS.md",
+          "verified_paths": [
+            "categories/news.m3u",
+            "categories/movies.m3u",
+            "categories/animation.m3u",
+            "categories/kids.m3u",
+            "countries/uk.m3u"
+          ]
+        },
+        "lucide": {
+          "license_url": "https://github.com/lucide-icons/lucide/blob/main/LICENSE",
+          "bundled_notice_exact_match": true,
+          "retained_notices": [
+            "ISC",
+            "Feather-derived MIT"
+          ]
+        },
+        "free_tv_root_license_found": false,
+        "csv_ai_guidance": "Reviewed native parser, embedded help, CSV_GUIDE.md and AI_CSV_PROMPT.md. Missing URLs use disabled placeholders; schemes required even for disabled rows. Privacy and authorised-use guidance accurate; no automatic uploads.",
+        "actions": {
+          "run_id": 38615783831,
+          "conclusion": "success",
+          "url": "https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/actions/runs/38615783831"
+        },
+        "zip": {
+          "version": "1.4.8",
+          "size_bytes": 55948,
+          "sha256": "b83e5f6fc2583b5746f94fb9e763f4bf5a5bda11b478ba493654cc9515c6cf17",
+          "release_metadata_verified": true,
+          "independent_download_crc_verified": false
+        }
+      },
+      "limitations": [
+        "Paths checked against upstream playlist index; feeds not playback-tested.",
+        "Repository licences do not grant rights to destination broadcasts.",
+        "Evidence writes were interrupted; resumed on 15 October. Review and completion times recorded separately."
+      ]
     }
-  }
+  },
+  "sequence_status": "completed"
 }
