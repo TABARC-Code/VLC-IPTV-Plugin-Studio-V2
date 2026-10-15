@@ -8,7 +8,7 @@ You do need a stream you are authorised to watch. The package includes disabled 
 
 1. Install desktop VLC 3 from https://www.videolan.org/vlc/.
 2. Open this project's [Releases page](https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/releases/latest).
-3. Under **Assets**, download the file named **iptv-channel-player-native-v1.5.0.zip**.
+3. Under **Assets**, download the file named **iptv-channel-player-native-v1.5.1.zip**.
 4. Extract the whole ZIP into Documents or another folder you can find again. On Windows, right-click it and choose **Extract All**. On macOS, double-click it. On Linux, use your archive manager's Extract command.
 5. Open the extracted folder containing **START HERE.txt** and the installer files. Keep these files together.
 
@@ -88,3 +88,9 @@ Keep passwords and private stream tokens out of public repositories, screenshots
 ## Choose an audience or show XXX
 
 Choose Show all, Cartoons, 12+, 16+, 18+, XXX or Unrated in the Audience dropdown, then press Apply filter. XXX starts hidden; tick Show XXX to include it, even with Show all selected. Labels select exact categories, not maximum ages. Use recognised group names or the optional audience CSV column; see [the worked setup](CSV_GUIDE.md#audience-categories-and-xxx). Labels are user-assigned, and Cartoons does not establish child suitability. This filter does not stop current playback or remove channels already queued.
+
+## Mac and Linux
+
+The ZIP contains the same native plugin for all three desktop systems. On Mac, use Install macOS.command; on Linux, open a terminal in the extracted folder and run `sh "Install Linux.sh"`. Both can use `sh install-unix.sh` as a fallback. Close VLC first and restart it afterwards. The installer preserves your CSV during updates. Use Extensions on Mac or View on Linux to open IPTV Channel Player V2.
+
+You can check the destination first with `sh install-unix.sh --dry-run`. See [SETUP.md](SETUP.md) for paths and portable installations. No Python or compiler is needed to use the extension.

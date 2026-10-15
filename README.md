@@ -1,6 +1,6 @@
 # IPTV Channel Player V2
 
-**TABARC-Code · v1.5.0 · a native VLC Lua extension**
+**TABARC-Code · v1.5.1 · a native VLC Lua extension**
 
 This version opens inside VLC. It reads your channel CSV, lets you search or choose a group, and plays a selected stream using VLC's own player. Queue buttons add channels to the existing playlist. Python is not required to install or run this extension.
 
@@ -20,12 +20,23 @@ You need **desktop VLC 3**, with its Lua extensions enabled. Download VLC from h
 
 1. Extract the whole ZIP into a folder. Do not run the installer from the ZIP preview.
 2. Close VLC.
-3. On Windows, double-click **Install Windows.cmd**. It runs the supplied PowerShell installer for your account, without changing the machine-wide script policy. On macOS, double-click **Install macOS.command**, or open Terminal in the extracted folder and run `sh install-unix.sh`. On Linux, open a terminal in the extracted folder and run `sh install-unix.sh`.
+3. On Windows, double-click **Install Windows.cmd**. It runs the supplied PowerShell installer for your account, without changing the machine-wide script policy. On macOS, double-click **Install macOS.command**, or open Terminal in the extracted folder and run `sh install-unix.sh`. On Linux, open a terminal in the extracted folder and run `sh "Install Linux.sh"`. Both systems also accept `sh install-unix.sh`.
 4. Open VLC again. On Windows and Linux, choose **View → IPTV Channel Player V2**. On macOS, look in VLC's **Extensions** menu for the same entry; the exact menu location depends on the build.
 
 The installer prints where it put your CSV. It preserves an existing CSV on updates and backs up the previous extension script. No administrator account is needed for a normal user-local installation.
 
 If a launcher cannot run, use the manual steps below. Avoid disabling system security controls for an unfamiliar download.
+
+### Mac and Linux installation
+
+The same ZIP and Lua extension serve Windows, macOS and Linux. Download the VLC build appropriate to your computer; the extension itself contains no architecture-specific binary.
+
+- **Mac:** extract the ZIP, close VLC and open **Install macOS.command**. Terminal fallback: `sh install-unix.sh` from the extracted folder. Reopen VLC and look in its Extensions menu.
+- **Linux:** extract the ZIP, close VLC and run `sh "Install Linux.sh"` from the extracted folder. Reopen VLC and choose View > IPTV Channel Player V2.
+
+Run `sh install-unix.sh --dry-run` to print the destination without installing. The installer uses your account's VLC data folder and preserves your CSV on upgrades. Advanced installations can pass `--data-dir /absolute/path/to/vlc-data`; that must be the data directory used by the selected VLC build. The option does not configure VLC itself. Flatpak/Snap/store installations are not automatically detected.
+
+CI checks the installer on both macOS and Linux. These checks cover files, paths and upgrades; they do not exercise the graphical VLC interface or stream playback. See [SETUP.md](SETUP.md) and [VALIDATION.md](VALIDATION.md).
 
 ## Play your first channel
 
