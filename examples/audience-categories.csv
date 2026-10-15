@@ -1,0 +1,7 @@
+id,name,group,country,language,stream_url,logo_url,tvg_id,enabled,audience
+audience-1,Example cartoons,Cartoons,GB,en,https://example.org/placeholder.m3u8,,,false,cartoons
+audience-2,Example 12+,Films,GB,en,https://example.org/placeholder.m3u8,,,false,12+
+audience-3,Example 16+,Films,GB,en,https://example.org/placeholder.m3u8,,,false,16+
+audience-4,Example 18+,Films,GB,en,https://example.org/placeholder.m3u8,,,false,18+
+audience-5,Example xxx,Films,GB,en,https://example.org/placeholder.m3u8,,,false,xxx
+audience-6,Example unrated,Films,GB,en,https://example.org/placeholder.m3u8,,,false,unrated

@@ -100,7 +100,7 @@ test("plain-text search and group/disabled filters", function()
     assert(#IPTV.filter(rows, "", "Kids", true) == 1)
 end)
 test("packaged examples parse and keep placeholder streams disabled", function()
-    for _, name in ipairs({"blank-template.csv", "starter-categories.csv", "metadata-and-quoting.csv"}) do
+    for _, name in ipairs({"blank-template.csv", "starter-categories.csv", "metadata-and-quoting.csv", "audience-categories.csv"}) do
         local file = assert(io.open(root .. "/examples/" .. name, "rb"))
         local examples = assert(IPTV.parse_csv(file:read("*a")))
         file:close()
@@ -110,13 +110,13 @@ test("packaged examples parse and keep placeholder streams disabled", function()
 end)
 activate()
 test("first launch shows the usage notice", function()
-    assert(widgets["html:1:9"].text:find("Do not misuse", 1, true))
+    assert(widgets["html:1:10"].text:find("Do not misuse", 1, true))
     show_help()
-    assert(widgets["html:1:9"].removed)
+    assert(widgets["html:1:10"].removed)
 end)
 widgets["input:2:2"].text = csv
 load_csv()
-local list = widgets["list:1:4"]
+local list = widgets["list:1:5"]
 test("load selects enabled rows without autoplay", function()
     assert(list.values[1] and not list.values[2] and #played == 0)
 end)
@@ -147,7 +147,7 @@ end)
 test("export asks before replacing and keeps the original backup", function()
     local out = tmp .. "/native-output.m3u"
     write(out, "original")
-    widgets["input:2:6"].text = out
+    widgets["input:2:7"].text = out
     export_m3u()
     local f = assert(io.open(out)); assert(f:read("*a") == "original"); f:close()
     export_m3u()
@@ -172,7 +172,7 @@ test("export cannot replace the loaded source through a dot-segment alias", func
     widgets["input:2:2"].text = source
     load_csv()
     for _, alias in ipairs({tmp .. "/./protected-source.m3u", tmp .. "/../" .. tmp:match("([^/]+)$") .. "/protected-source.m3u"}) do
-        widgets["input:2:6"].text = alias
+        widgets["input:2:7"].text = alias
         export_m3u()
         export_m3u()
         local file = assert(io.open(source, "rb"))
@@ -192,13 +192,144 @@ test("path keys compare separators, dot segments and Windows drive casing", func
     assert(not IPTV.same_path("source.m3u", "/fixture/other.m3u"))
     vlc.strings = nil
 end)
+
+local audience_header = header:gsub("\n$", ",audience\n")
+local audience_data = audience_header
+for i, label in ipairs({"cartoons", "12+", "16+", "18+", "xxx", "unrated"}) do
+    audience_data = audience_data .. i .. ",Channel " .. i .. ",Films,GB,en,https://example.org/" .. i .. ",,,true," .. label .. "\n"
+end
+audience_data = audience_data .. "7,Disabled adult,Films,GB,en,https://example.org/7,,,false,xxx\n"
+test("audience metadata is optional, normalised and validated", function()
+    assert(IPTV.parse_csv(data)[1].audience == "")
+    assert(IPTV.parse_csv(audience_data:gsub(",xxx", ", XXX "))[5].audience == "xxx")
+    assert(not IPTV.parse_csv(audience_data:gsub(",xxx", ",unknown")))
+    assert(not IPTV.parse_csv(audience_data:gsub(",xxx", ",all")))
+    local reordered = "audience," .. header .. "18+,x,Test,Films,GB,en,https://example.org/x,,,true\n"
+    assert(IPTV.parse_csv(reordered)[1].audience == "18+")
+end)
+test("legacy group labels work without guessing from channel names", function()
+    for _, group in ipairs({"Adult", "XXX", " adult (xxx) "}) do
+        assert(IPTV.audience({group=group}) == "xxx")
+    end
+    assert(IPTV.audience({group="Animation"}) == "cartoons")
+    assert(IPTV.audience({group="Cartoons"}) == "cartoons")
+    assert(IPTV.audience({group="18+"}) == "18+")
+    assert(IPTV.audience({group="News", name="Adult cartoons"}) == "unrated")
+    assert(IPTV.audience({group="Cartoons", audience="18+"}) == "18+")
+    assert(IPTV.audience({group="Adult", audience="unrated"}) == "unrated")
+end)
+test("audience choices are exact categories and XXX needs explicit opt-in", function()
+    local rows = assert(IPTV.parse_csv(audience_data))
+    assert(#IPTV.filter(rows, "", nil, false) == 5)
+    for _, label in ipairs({"cartoons", "12+", "16+", "18+", "unrated"}) do
+        local result = IPTV.filter(rows, "", nil, false, label, false)
+        assert(#result == 1 and rows[result[1]].audience == label)
+    end
+    assert(#IPTV.filter(rows, "", nil, true, "xxx", false) == 0)
+    assert(#IPTV.filter(rows, "", nil, false, "xxx", true) == 1)
+    assert(#IPTV.filter(rows, "", nil, true, "xxx", true) == 2)
+    assert(#IPTV.filter(rows, "", nil, false, "all", true) == 6)
+    assert(#IPTV.filter(rows, "Channel 5", "News", false, "all", true) == 0)
+    assert(#IPTV.filter(rows, "Channel 5", "Films", false, "all", true) == 1)
+end)
+test("M3U helper hides XXX by default and always excludes disabled records", function()
+    local rows = assert(IPTV.parse_csv(audience_data))
+    local out, count = IPTV.m3u(rows)
+    assert(count == 5 and not out:find("https://example.org/5", 1, true))
+    out, count = IPTV.m3u(rows, "xxx", true)
+    assert(count == 1 and out:find("https://example.org/5", 1, true))
+    assert(not out:find("https://example.org/7", 1, true))
+end)
+test("native controls hide XXX initially and filter the list on apply", function()
+    write(csv, audience_data)
+    widgets["input:2:2"].text = csv
+    load_csv()
+    assert(not widgets["check:4:4"].checked and not list.values[5] and not list.values[7])
+    for choice, row in ipairs({1, 2, 3, 4}) do
+        widgets["dropdown:2:4"].value = choice + 1
+        refresh_channels()
+        local count = 0
+        for _ in pairs(list.values) do count = count + 1 end
+        assert(count == 1 and list.values[row])
+    end
+    widgets["dropdown:2:4"].value = 6
+    refresh_channels()
+    assert(next(list.values) == nil)
+    widgets["check:4:4"].checked = true
+    refresh_channels()
+    assert(list.values[5] and list.values[7]) -- Show disabled is still enabled above.
+end)
+test("changing XXX visibility blocks stale selected playback and queueing", function()
+    list.selection = {[5] = list.values[5]}
+    local play_count, queue_count = #played, #queued
+    play_selected()
+    assert(#played == play_count + 1)
+    widgets["check:4:4"].checked = false -- No Apply filter yet.
+    play_selected()
+    queue_selected()
+    assert(#played == play_count + 1 and #queued == queue_count)
+end)
+test("bulk queue and export use current filters even before Apply filter", function()
+    widgets["dropdown:2:4"].value = 1
+    local queue_count = #queued
+    queue_enabled()
+    assert(#queued == queue_count + 1 and #queued[#queued] == 5)
+    local out = tmp .. "/audience-export.m3u"
+    widgets["input:2:7"].text = out
+    export_m3u()
+    local f = assert(io.open(out)); local text = f:read("*a"); f:close()
+    assert(not text:find("https://example.org/5", 1, true))
+    widgets["check:4:4"].checked = true
+    widgets["input:2:3"].text = "Channel 5"
+    queue_enabled()
+    assert(#queued[#queued] == 1 and queued[#queued][1].path == "https://example.org/5")
+    widgets["input:2:7"].text = tmp .. "/xxx-export.m3u"
+    export_m3u()
+    f = assert(io.open(widgets["input:2:7"].text)); text = f:read("*a"); f:close()
+    assert(text:find("https://example.org/5", 1, true) and not text:find("https://example.org/1", 1, true))
+    widgets["input:2:3"].text = ""
+end)
+test("invalid audience reload preserves the previous valid database", function()
+    write(csv, audience_data:gsub(",xxx", ",typo"))
+    load_csv()
+    widgets["dropdown:2:4"].value = 6
+    refresh_channels()
+    assert(list.values[5])
+    write(csv, audience_data)
+end)
+test("bulk operations include matches beyond the 1,000-row display cap", function()
+    local many = audience_header
+    for i = 1, 1002 do
+        many = many .. i .. ",Many " .. i .. ",Films,GB,en,https://example.org/many/" .. i .. ",,,true,12+\n"
+    end
+    write(csv, many)
+    widgets["dropdown:2:4"].value = 3
+    load_csv()
+    assert(list.values[1000] and not list.values[1001])
+    queue_enabled()
+    assert(#queued[#queued] == 1002)
+    widgets["input:2:7"].text = tmp .. "/many-export.m3u"
+    export_m3u()
+    local f = assert(io.open(widgets["input:2:7"].text)); local text = f:read("*a"); f:close()
+    local _, count = text:gsub("#EXTINF", "")
+    assert(count == 1002)
+    write(csv, audience_data)
+end)
+test("reopening resets XXX visibility and audience selection", function()
+    deactivate()
+    activate()
+    list = widgets["list:1:5"]
+    assert(widgets["dropdown:2:4"].value == 1 and not widgets["check:4:4"].checked)
+    assert(list.values[1] and not list.values[5])
+end)
+
 test("help notice and clean deactivation", function()
     show_help()
-    assert(widgets["html:1:9"].text:find("Do not misuse", 1, true))
+    assert(widgets["html:1:10"].text:find("Do not misuse", 1, true))
     show_help()
-    assert(widgets["html:1:9"].removed)
+    assert(widgets["html:1:10"].removed)
     show_csv_guide()
-    assert(widgets["html:1:9"].text:find("Never invent working", 1, true))
+    assert(widgets["html:1:10"].text:find("Never invent working", 1, true))
     close()
     assert(deleted)
 end)
