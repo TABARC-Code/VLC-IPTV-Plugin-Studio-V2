@@ -38,6 +38,8 @@ Run `sh install-unix.sh --dry-run` to print the destination without installing. 
 
 CI checks the installer on both macOS and Linux. These checks cover files, paths and upgrades; they do not exercise the graphical VLC interface or stream playback. See [SETUP.md](SETUP.md) and [VALIDATION.md](VALIDATION.md).
 
+**A note from me:** The Linux and Mac installation components were vibe coded. They're outside my comfort zone, and I wanted to confirm that the plugin could work on those systems too. Automated installer checks are part of that process; testing the interface and playback inside VLC still needs doing.
+
 ## Play your first channel
 
 The extension opens with a CSV path already filled in. A fresh installation includes four **disabled placeholder channels**. There are no subscriptions or working feeds bundled with the package.
