@@ -1,6 +1,6 @@
 # IPTV Channel Player V2
 
-**TABARC-Code · v1.4.9 · a native VLC Lua extension**
+**TABARC-Code · v1.4.10 · a native VLC Lua extension**
 
 This version opens inside VLC. It reads your channel CSV, lets you search or choose a group, and plays a selected stream using VLC's own player. Queue buttons add channels to the existing playlist. Python is not required to install or run this extension.
 
@@ -8,7 +8,7 @@ I have kept the channel database separate from the code. Editing a television ch
 
 ## Guides
 
-[Complete beginner](IDIOTS_GUIDE.md) · [CSV from scratch](CSV_GUIDE.md) · [Optional AI prompt](AI_CSV_PROMPT.md) · [User guide](USER_GUIDE.md) · [Setup](SETUP.md) · [FAQ](FAQ.md) · [Roadmap](ROADMAP.md) · [Developer guide](DEVELOPER_GUIDE.md)
+[Complete beginner](IDIOTS_GUIDE.md) · [CSV from scratch](CSV_GUIDE.md) · [AI source research and file prompts](AI_CSV_PROMPT.md) · [User guide](USER_GUIDE.md) · [Setup](SETUP.md) · [FAQ](FAQ.md) · [Roadmap](ROADMAP.md) · [Developer guide](DEVELOPER_GUIDE.md)
 
 ## Reusable sources and licences
 

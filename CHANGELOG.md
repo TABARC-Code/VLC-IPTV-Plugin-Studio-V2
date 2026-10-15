@@ -2,6 +2,12 @@
 
 Actual changes only. Release dates and notes are recorded when the work is published.
 
+## 1.4.10 — 15 October 2026
+
+Added a copyable AI source-research prompt with citations, licence-file checks and a clear distinction between indexed links, endpoint checks and playback. Retained the CSV formatting prompt and added optional M3U conversion instructions. Included authorised-use and privacy wording for the repository edition.
+
+The extension does not browse for channels or send lists to AI services. Runtime behaviour is unchanged; the packaged guide is copied by the existing installers.
+
 ## 1.4.9 — 15 October 2026
 
 Expanded the packaged beginner guide into a download-to-play walkthrough, with Windows, macOS and Linux installation steps, first-channel setup, CSV saving, queue/export behaviour and troubleshooting. Clarified missing URLs and disabled placeholders in the CSV guide, and added direct pointers in START HERE.txt.
