@@ -23,12 +23,34 @@ jobs:
         run: |
           luac5.1 -p iptv-channel-player.lua
           lua5.1 tools/validate_examples.lua .
-          sh -n install-unix.sh 'Install macOS.command'
+          sh -n install-unix.sh 'Install Linux.sh' 'Install macOS.command'
       - name: Regression tests
         run: |
           test_dir=$(mktemp -d)
           lua5.1 tests/test_extension.lua . "$test_dir"
           python -m unittest discover -s tests -v
+  installers:
+    name: Installer (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check launchers and installation
+        run: |
+          sh -n install-unix.sh 'Install Linux.sh' 'Install macOS.command'
+          python -m unittest discover -s tests -p test_install.py -v
+  release:
+    needs: [verify, installers]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Publish immutable versioned ZIP
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:

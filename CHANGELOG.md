@@ -2,6 +2,13 @@
 
 Actual changes only. Release dates and notes are recorded when the work is published.
 
+## 1.5.1 — 15 October 2026
+
+- Added an executable Linux launcher alongside the macOS launcher. Both pass installer options through and work from other working directories; the Mac launcher waits for Return only in an interactive terminal.
+- Added installer dry-run and an explicit VLC data-directory option, with absolute-path checks and package completeness checks before copying.
+- Added macOS and Linux installer CI jobs covering native default paths, Unicode/spaces in paths, upgrades and launchers. Release publication now waits for both platforms and the Lua checks.
+- Clarified that one Lua plugin serves all three desktop systems, with no Python runtime or compilation required. Desktop GUI/playback testing remains separate from installer checks.
+
 ## 1.5.0 — 15 October 2026
 
 - Added a single-choice Audience dropdown: Show all, Cartoons, 12+, 16+, 18+, XXX and Unrated.

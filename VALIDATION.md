@@ -1,5 +1,11 @@
 # Validation and remaining limits
 
+## 1.5.1 macOS and Linux installation
+
+The installer suite covers installation and upgrades in paths containing spaces and Unicode, default user paths, Linux XDG paths, both launchers from another working directory and invalid arguments. Five tests passed locally on Linux. The macOS CI job runs the four applicable tests on a macOS runner; the Linux-specific XDG test is skipped there. Release publication waits for both installer jobs and the Lua regression job.
+
+These are actual filesystem/launcher checks, not graphical VLC tests. The new audience controls still require desktop validation on macOS and Linux. No Flatpak/Snap path discovery or sandbox compatibility is claimed.
+
 ## 1.5.0 audience-filter checks
 
 The 28-scenario native suite passed locally under texlua (Lua 5.3), including optional/reordered metadata, invalid audience rejection, legacy group fallbacks, each exact category, XXX opt-in, disabled records, stale selections, filtered queue/export, the 1,000-row display cap and visibility reset on reopening. All four example CSVs parsed and the Linux install/upgrade preservation test passed. The restricted descriptor scan is included. CI runs the suite on Lua 5.1.
