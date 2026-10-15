@@ -1,6 +1,12 @@
 # Validation and remaining limits
 
-## Automated checks
+## 1.5.0 audience-filter checks
+
+The 28-scenario native suite passed locally under texlua (Lua 5.3), including optional/reordered metadata, invalid audience rejection, legacy group fallbacks, each exact category, XXX opt-in, disabled records, stale selections, filtered queue/export, the 1,000-row display cap and visibility reset on reopening. All four example CSVs parsed and the Linux install/upgrade preservation test passed. The restricted descriptor scan is included. CI runs the suite on Lua 5.1.
+
+The new controls have not yet been exercised in a real VLC desktop session. Earlier desktop findings below apply to the earlier interface, not this new layout. Verify the Audience dropdown and Show XXX checkbox on desktop VLC before describing the new UI as platform-tested. Labels are supplied by the user; no automatic content classification is tested or claimed.
+
+## Earlier automated checks
 
 The 1.4.8 Lua source passed a Lua 5.1 syntax check and 18 regression scenarios, including VLC’s restricted descriptor scan, CSV quoting/BOM/CRLF handling, invalid rows, disabled records, filtering, playlist calls, preserved data after a failed reload, first-launch notice, source-path alias protection and export recovery. Packaged examples were parsed by the same implementation. The path tests include Windows-style comparisons; they do not establish Windows desktop support.
 

@@ -1,6 +1,6 @@
 # IPTV Channel Player V2
 
-**TABARC-Code · v1.4.10 · a native VLC Lua extension**
+**TABARC-Code · v1.5.0 · a native VLC Lua extension**
 
 This version opens inside VLC. It reads your channel CSV, lets you search or choose a group, and plays a selected stream using VLC's own player. Queue buttons add channels to the existing playlist. Python is not required to install or run this extension.
 
@@ -41,15 +41,25 @@ You can use another CSV instead: copy its full local path into the CSV field. Wi
 
 Type a search, choose a group, or tick Show disabled, then choose **Apply filter**. Search covers names, groups, countries and languages using simple case folding. Disabled records are marked and cannot be played from the extension.
 
-**Queue selected** adds your selected enabled channels without starting them. **Queue all enabled** adds every enabled record, regardless of the filter. These actions append to the current VLC playlist; they do not clear it. Repeated clicks intentionally add another copy.
+**Queue selected** adds your selected enabled channels without starting them. **Queue filtered** adds enabled records matching the current search, group and audience settings. These actions append to the current VLC playlist; they do not clear it. Repeated clicks intentionally add another copy.
 
-For another IPTV app, enter a local filename ending in .m3u or .m3u8 and choose **Export M3U**. Export uses all enabled rows. If the output already exists, the extension asks for a second click and keeps the old file under a .backup name. Keep those backups private too if the URLs contain access tokens.
+For another IPTV app, enter a local filename ending in .m3u or .m3u8 and choose **Export M3U**. Export uses enabled rows matching the current filters, including matches beyond the 1,000-row display cap. If the output already exists, the extension asks for a second click and keeps the old file under a .backup name. Keep those backups private too if the URLs contain access tokens.
 
 The list displays at most 1,000 matching rows; refine the filter to reach a particular channel. CSV input is limited to 2 MiB and 20,000 records so a huge list does not pin the extension UI indefinitely.
 
+## Audience and XXX visibility
+
+Choose one audience from the dropdown: **Show all**, **Cartoons**, **12+**, **16+**, **18+**, **XXX** or **Unrated**. Tick **Show XXX** to include channels labelled XXX, then choose **Apply filter**. XXX is hidden whenever you open the extension. Show all includes every audience except XXX while that checkbox is off.
+
+These are exact categories: 12+ selects the 12+ label; it does not include other ages. 18+ and XXX are separate. The labels come from your CSV, are not verified ratings and do not establish whether a channel is suitable for children. Cartoons can include adult animation. This is a list filter, not a PIN lock; it does not stop current playback or remove items already queued in VLC.
+
+The easiest setup uses the existing `group` column: Cartoons, Animation, 12+, 16+, 18+, XXX, Adult and Adult (XXX) are recognised as complete group names, ignoring case and surrounding spaces. Other groups are Unrated. To keep your own groups, add the optional `audience` column instead and enter `cartoons`, `12+`, `16+`, `18+`, `xxx` or `unrated`. Explicit labels override the group; a blank cell uses the group fallback. No classification is guessed from channel names.
+
+Start with [examples/audience-categories.csv](examples/audience-categories.csv); all its streams are disabled placeholders. Label adult animation 18+ or XXX as appropriate, keeping Cartoons as its group for group filtering. **Queue filtered** and **Export M3U** use the current controls even before you press Apply filter. Selected playback and queueing also check the current filters again.
+
 ## CSV layout
 
-Use the exact header below. All nine columns must exist; optional cells can be empty.
+Use the exact header below. All nine original columns must exist; optional cells can be empty. An optional tenth column, `audience`, enables explicit audience labels. Existing nine-column files still work.
 
 ```csv
 id,name,group,country,language,stream_url,logo_url,tvg_id,enabled

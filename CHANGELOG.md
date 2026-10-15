@@ -2,6 +2,14 @@
 
 Actual changes only. Release dates and notes are recorded when the work is published.
 
+## 1.5.0 — 15 October 2026
+
+- Added a single-choice Audience dropdown: Show all, Cartoons, 12+, 16+, 18+, XXX and Unrated.
+- Added Show XXX, off on every opening. Show all respects that setting.
+- Added optional audience CSV metadata and exact group-name fallbacks; existing nine-column CSV files remain supported.
+- Queue filtered replaces Queue all enabled. Bulk queue and M3U export now honour search, group, audience and XXX visibility, including matches beyond the display cap. Selected actions recheck changed controls before handing channels to VLC.
+- Added disabled audience examples and regression coverage. Labels are user-assigned categories, not verified age ratings or a parental lock.
+
 ## 1.4.10 — 15 October 2026
 
 Added a copyable AI source-research prompt with citations, licence-file checks and a clear distinction between indexed links, endpoint checks and playback. Retained the CSV formatting prompt and added optional M3U conversion instructions. Included authorised-use and privacy wording for the repository edition.

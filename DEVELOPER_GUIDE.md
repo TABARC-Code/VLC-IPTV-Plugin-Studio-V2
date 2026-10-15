@@ -14,7 +14,7 @@ The deployable extension stays self-contained so the user copies one script and 
 - close() asks VLC to deactivate the extension.
 - meta_changed() accepts metadata events sent by some VLC 3 builds.
 
-Button callbacks load/reload CSV, refresh filters, play/queue selected rows, queue all enabled, export M3U and show guides. They run in VLC’s extension context. Network fetching, an AI client and background watcher threads are intentionally not part of this release.
+Button callbacks load/reload CSV, refresh filters, play/queue selected rows, queue filtered rows, export M3U and show guides. They run in VLC’s extension context. Network fetching, an AI client and background watcher threads are intentionally not part of this release.
 
 ## Testable helpers
 
@@ -22,11 +22,13 @@ Button callbacks load/reload CSV, refresh filters, play/queue selected rows, que
 | --- | --- |
 | IPTV.csv_line(line) | Return fields or nil/error for one physical CSV line |
 | IPTV.parse_csv(data) | Return validated rows or nil/error, without changing active data |
-| IPTV.filter(rows, query, group, show_disabled) | Return original row indices using literal search |
-| IPTV.m3u(rows) | Return extended M3U text and enabled record count |
+| IPTV.filter(rows, query, group, show_disabled, audience, include_xxx) | Return original row indices using literal search and exact audience; XXX excluded unless opted in |
+| IPTV.m3u(rows, audience, include_xxx) | Return extended M3U text and enabled record count; XXX excluded unless opted in |
 | IPTV.write_m3u(path, content, allow_replace) | Write a new export or back up/replace an existing file; return success/detail |
 | IPTV.path_key(path, windows) | Normalise dot segments and path separators; apply Windows-style case comparison when requested |
 | IPTV.same_path(left, right) | Use VLC's URI helper to resolve relative paths when available, then compare normalised path keys |
+
+The optional audience column accepts cartoons, 12+, 16+, 18+, xxx and unrated, ignoring case. Blank/missing values use exact legacy group labels or Unrated. IPTV.audience(row) resolves the label; IPTV.audience_matches(row, audience, include_xxx) applies the visibility preference. The dropdown and checkbox use existing VLC dialog APIs. All playlist callbacks recheck current filters; bulk operations work on all matches, not the capped list.
 
 ID uniqueness and mandatory field checks precede a successful reload. CSV source files are never changed by these helpers. Search is bounded by input size; the native list has a separate display cap. M3U replacement uses a same-directory temporary file, backup and attempted rollback. These operations assume one writer; they are not a database transaction system.
 

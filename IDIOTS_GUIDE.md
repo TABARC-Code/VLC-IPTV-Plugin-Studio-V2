@@ -8,7 +8,7 @@ You do need a stream you are authorised to watch. The package includes disabled 
 
 1. Install desktop VLC 3 from https://www.videolan.org/vlc/.
 2. Open this project's [Releases page](https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/releases/latest).
-3. Under **Assets**, download the file named **iptv-channel-player-native-v1.4.10.zip**.
+3. Under **Assets**, download the file named **iptv-channel-player-native-v1.5.0.zip**.
 4. Extract the whole ZIP into Documents or another folder you can find again. On Windows, right-click it and choose **Extract All**. On macOS, double-click it. On Linux, use your archive manager's Extract command.
 5. Open the extracted folder containing **START HERE.txt** and the installer files. Keep these files together.
 
@@ -63,9 +63,9 @@ For another channel, add a row with a different ID, save and reload. The extensi
 
 **Apply filter** updates a name search or group selection. **Show disabled** reveals rows you have kept for later. Disabled rows cannot be played or queued.
 
-**Queue selected** adds selected enabled channels to VLC's current playlist without starting them. **Queue all enabled** adds every enabled row, including rows outside the current filter. Repeated clicks add repeated entries.
+**Queue selected** adds selected enabled channels to VLC's current playlist without starting them. **Queue filtered** adds enabled rows matching the current filters, including matches beyond the first 1,000 displayed. Repeated clicks add repeated entries.
 
-**Export M3U** writes all enabled channels to a local .m3u or .m3u8 file for another player. Choose a separate output filename, never your channel database or a filesystem alias of it. Replacing an existing playlist requires a second click and keeps a backup. Exports and backups can contain private tokens; keep them private.
+**Export M3U** writes enabled channels matching the current filters to a local .m3u or .m3u8 file for another player. Choose a separate output filename, never your channel database or a filesystem alias of it. Replacing an existing playlist requires a second click and keeps a backup. Exports and backups can contain private tokens; keep them private.
 
 ## If something goes wrong
 
@@ -84,3 +84,7 @@ More answers are in [FAQ.md](FAQ.md). The optional [AI prompt](AI_CSV_PROMPT.md)
 Do not misuse this software. Use only streams you are authorised to access. Follow applicable laws, provider terms and licensing requirements, including a UK TV Licence where required. Public playlist links and open-source licences do not grant broadcast rights. Use at your own risk; availability and playback are not guaranteed.
 
 Keep passwords and private stream tokens out of public repositories, screenshots, support requests and AI prompts. Back up your CSV before editing or updating. To uninstall, close VLC and remove only **iptv-channel-player.lua** from your user extension folder; keep your CSV and backups unless you deliberately choose to delete them.
+
+## Choose an audience or show XXX
+
+Choose Show all, Cartoons, 12+, 16+, 18+, XXX or Unrated in the Audience dropdown, then press Apply filter. XXX starts hidden; tick Show XXX to include it, even with Show all selected. Labels select exact categories, not maximum ages. Use recognised group names or the optional audience CSV column; see [the worked setup](CSV_GUIDE.md#audience-categories-and-xxx). Labels are user-assigned, and Cartoons does not establish child suitability. This filter does not stop current playback or remove channels already queued.

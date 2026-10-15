@@ -76,3 +76,7 @@ A .m3u playlist opens directly in VLC or a compatible IPTV app. It does not load
 Do not misuse this software. Use only streams you are authorised to access and follow applicable laws, provider terms and licensing requirements, including a UK TV Licence where required. A repository licence does not license the destination broadcasts. Use at your own risk; source availability and playback are not guaranteed.
 
 Do not upload your private channel database, credentials or token-bearing URLs to an AI service. Supply public metadata or placeholders, then add sensitive values locally. Check the assistant's data-handling terms before sharing anything. CSV files, M3U exports and their backups can all contain access tokens.
+
+## Optional audience labels (1.5.0 onwards)
+
+When you want audience filtering, amend the prompt to append `audience` to the nine-column header. Accept only labels supplied by the user: cartoons, 12+, 16+, 18+, xxx or unrated. Leave unknown audience cells blank; do not infer age suitability from names or animation. Blank cells fall back to recognised group names, otherwise Unrated. Every row then needs ten cells. See [CSV_GUIDE.md](CSV_GUIDE.md#audience-categories-and-xxx) for the exact fallback rules and disabled examples.

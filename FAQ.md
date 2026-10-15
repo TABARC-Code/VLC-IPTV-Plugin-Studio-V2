@@ -26,8 +26,12 @@ It preserved the existing playlist before replacing it. Delete an old backup you
 
 ## Why are only some channels visible?
 
-The filter or enabled state may exclude them. Display is capped at 1,000 matching records; refine the search. Input is limited to 2 MiB and 20,000 records. Queue all enabled and export still use all enabled loaded records.
+The filter or enabled state may exclude them. Display is capped at 1,000 matching records; refine the search. Input is limited to 2 MiB and 20,000 records. Queue filtered and export use enabled records matching the current controls, including matches beyond the display cap.
 
 ## What should a bug report include?
 
 Version, operating system, VLC build, exact steps and a small anonymised CSV reproducing the issue. Remove credentials and private URLs first. Avoid posting your complete personal database.
+
+## Why are my XXX channels missing?
+
+XXX is hidden on every opening. Tick Show XXX and press Apply filter; Show all also respects that checkbox. Check the audience column or recognised group name. Blank or unknown groups fall into Unrated unless audience supplies a label. This is a visibility preference, not a parental lock or verified age rating.

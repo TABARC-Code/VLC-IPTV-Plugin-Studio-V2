@@ -6,13 +6,17 @@ The development brief is the direction of travel. This page distinguishes implem
 
 Native VLC dialog, CSV validation, group and text filters, enabled records, selected playback, queueing, M3U export, backup handling, user-local installation, branding and beginner/AI CSV instructions. The reader does not modify the original channel database.
 
+## Added in 1.5.0
+
+Audience dropdown, XXX visibility checkbox, optional audience CSV metadata and legacy group fallbacks. Playback, queue and export respect current filters. Labels are user-assigned; no age verification or parental lock is provided.
+
 ## Next: verify and remove friction
 
 Validate the installers and in-player interface on Windows and macOS. Check keyboard navigation, screen readers, high DPI, long paths and non-ASCII filenames. Confirm provider-format behaviour with authorised sample streams. Review the 1,000-item display cap and the 2 MiB input limit using measured timings before raising either. Add useful failures rather than optimistic status labels.
 
 ## Playlist organisation
 
-Plan favourites, recently viewed, multiple lists, custom collections, country/language views, sorting, duplicate review, bulk operations, tags, colour labels and saved searches. Preserve source records when merging; deletion or deduplication should remain an explicit user decision. User-controlled mature-content labels can be considered when metadata supports them.
+Plan favourites, recently viewed, multiple lists, custom collections, country/language views, sorting, duplicate review, bulk operations, tags, colour labels and saved searches. Preserve source records when merging; deletion or deduplication should remain an explicit user decision. Audience labels and XXX visibility are implemented in 1.5.0; saved preferences and richer classifications remain possible future work.
 
 ## Import and guides
 

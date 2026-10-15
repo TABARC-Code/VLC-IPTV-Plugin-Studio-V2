@@ -1,6 +1,6 @@
 # Make your own IPTV CSV: a complete beginner’s guide
 
-You can create the list yourself. The file is a small table: one channel per row, with nine columns. VLC reads it through IPTV Channel Player V2. A spreadsheet is convenient, but a plain text editor works too.
+You can create the list yourself. The file is a small table: one channel per row, with nine required columns and an optional audience column. VLC reads it through IPTV Channel Player V2. A spreadsheet is convenient, but a plain text editor works too.
 
 ## Before you start
 
@@ -55,6 +55,34 @@ Add more channels on rows 3, 4 and onwards. Do not put notes above the header or
 If you do not have a stream URL, enter https://example.org/placeholder.m3u8 and set enabled to false. Leave it disabled until you have replaced the placeholder and checked your permission. A blank stream_url is rejected even on a disabled row.
 
 All nine column names are required. Country, language, group, logo and programme-guide cells can be empty. ID, name, stream URL and enabled need values. Headers may be reordered, but keeping the standard order makes support and copying examples easier.
+
+## Audience categories and XXX
+
+For the simplest setup, use one of these complete names in `group`: Cartoons, Animation, 12+, 16+, 18+, XXX, Adult or Adult (XXX). Capitalisation and surrounding spaces do not matter. Adult, Adult (XXX) and XXX all select the XXX category. Unknown groups remain Unrated; channel names are not inspected.
+
+If you want to keep groups such as Films or UK TV, add **audience** as a tenth header in J1. Put one of the following values into each row:
+
+| Value | Audience dropdown |
+| --- | --- |
+| cartoons | Cartoons |
+| 12+ | 12+ only |
+| 16+ | 16+ only |
+| 18+ | 18+ only, separate from XXX |
+| xxx | XXX, hidden until Show XXX is ticked |
+| unrated | Unrated, overriding the group fallback |
+| blank cell | Use the recognised group name, otherwise Unrated |
+
+These are your labels, not official or automatically verified ratings. Cartoons may include adult animation: give those rows an appropriate 18+ or XXX audience and retain Cartoons as the group if useful. An explicit audience overrides the group. Invalid audience values reject the reload and preserve the previous valid list.
+
+```csv
+id,name,group,country,language,stream_url,logo_url,tvg_id,enabled,audience
+animation-01,My Animation,Cartoons,GB,en,https://example.org/placeholder.m3u8,,,false,16+
+adult-01,My Adult Channel,Films,GB,en,https://example.org/placeholder.m3u8,,,false,xxx
+```
+
+All ten cells must be present on each row when this header is used. Older nine-column files need no conversion. There is a complete disabled template at [examples/audience-categories.csv](examples/audience-categories.csv).
+
+In VLC, choose **Audience**, set **Show XXX** if wanted and press **Apply filter**. Show all respects the XXX checkbox. To include every enabled channel in a queue or export, select Show all, tick Show XXX, select All groups and clear Search. Queue filtered and Export M3U respect those controls even before Apply filter; disabled rows remain excluded. They also include matching rows beyond the display cap. Opening the extension resets XXX to hidden. It does not remove existing playlist items or stop playback.
 
 ## Save it properly
 
