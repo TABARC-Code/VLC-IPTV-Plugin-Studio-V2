@@ -2,6 +2,12 @@
 
 Actual changes only. Release dates and notes are recorded when the work is published.
 
+## 1.4.9 — 15 October 2026
+
+Expanded the packaged beginner guide into a download-to-play walkthrough, with Windows, macOS and Linux installation steps, first-channel setup, CSV saving, queue/export behaviour and troubleshooting. Clarified missing URLs and disabled placeholders in the CSV guide, and added direct pointers in START HERE.txt.
+
+Runtime behaviour is unchanged. Existing installers already copy both Markdown guides beside the installed CSV while preserving user data. Platform and playback limitations remain.
+
 ## 1.4.8 — 14 October 2026
 
 Protected the loaded channel database from export paths containing alternate separators or dot segments. VLC resolves relative paths before comparison when its URI helper is available; Windows-style comparison also ignores drive/path casing.

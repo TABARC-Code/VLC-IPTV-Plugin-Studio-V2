@@ -2,6 +2,12 @@
 
 You can create the list yourself. The file is a small table: one channel per row, with nine columns. VLC reads it through IPTV Channel Player V2. A spreadsheet is convenient, but a plain text editor works too.
 
+## Before you start
+
+Install and open the extension using [the complete beginner’s guide](IDIOTS_GUIDE.md). The installer prints the location of channels.csv; that is the file to edit for the quickest route. If you prefer your own file, start with a copy of [examples/starter-categories.csv](examples/starter-categories.csv) from the extracted release folder.
+
+Get a direct stream address from your authorised provider. A website address or the URL of a whole M3U playlist is not a substitute for an individual channel stream. This extension loads local CSV files; VLC itself can open M3U playlists separately.
+
 ## The quickest route
 
 1. Copy examples/starter-categories.csv and rename your copy my-channels.csv.
@@ -46,6 +52,8 @@ On row 2, enter your first channel. A safe practice row is below. Its URL is fic
 
 Add more channels on rows 3, 4 and onwards. Do not put notes above the header or add another heading in the middle of the data.
 
+If you do not have a stream URL, enter https://example.org/placeholder.m3u8 and set enabled to false. Leave it disabled until you have replaced the placeholder and checked your permission. A blank stream_url is rejected even on a disabled row.
+
 All nine column names are required. Country, language, group, logo and programme-guide cells can be empty. ID, name, stream URL and enabled need values. Headers may be reordered, but keeping the standard order makes support and copying examples easier.
 
 ## Save it properly
@@ -80,6 +88,12 @@ kids-01,"The ""Cartoon"" Channel",Cartoons,GB,en,https://example.org/kids.m3u8,,
 ```
 
 Keep each record on one line. The parser accepts a UTF-8 BOM and Windows line endings, but not multiline cells.
+
+## Add another channel and keep your changes
+
+Copy a complete row, give the copy a new ID, then change its name, group and stream URL. Save the CSV and choose **Load / Reload CSV** in VLC. If the new row is disabled, tick **Show disabled** and choose **Apply filter** to see it.
+
+Keep a backup before a large edit. Do not save an M3U export over your CSV or an alias of it: exports are separate playlists, and your source table is the file you will want next week.
 
 ## Groups, country, language and guides
 
