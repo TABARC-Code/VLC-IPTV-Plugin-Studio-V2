@@ -1,0 +1,4 @@
+id,name,category,country,language,stream_url,logo_url,tvg_id,enabled,adult,notes
+demo-news,Example News,"News, International",GB,English,https://provider.example/news.m3u8,,example.news,false,false,Replace with an authorised stream
+demo-late,Example Late,Entertainment,US,English,https://provider.example/late.m3u8,,example.late,false,true,18+ visibility example
+
