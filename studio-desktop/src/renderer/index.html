@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>TABARC VLC IPTV Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#channel-table">Skip to channels</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="../../assets/icon.png" alt="" width="42" height="42">
+        <div>
+          <p class="eyebrow">TABARC-CODE</p>
+          <h1>VLC IPTV Studio <span id="version">v1.4.7</span></h1>
+        </div>
+      </div>
+      <label class="search-box">
+        <i data-lucide="search" aria-hidden="true"></i>
+        <span class="sr-only">Search channels</span>
+        <input id="search" type="search" placeholder="Search channels, countries or categories">
+        <kbd>/</kbd>
+      </label>
+      <div class="top-actions">
+        <button class="button quiet" id="export"><i data-lucide="download"></i>Export M3U</button>
+        <button class="button play" id="play"><i data-lucide="play"></i>Play visible in VLC</button>
+      </div>
+    </header>
+
+    <aside class="sidebar" aria-label="Library navigation">
+      <section>
+        <div class="section-heading"><h2>Libraries</h2><button class="icon-button" id="refresh" title="Refresh libraries" aria-label="Refresh libraries"><i data-lucide="refresh-cw"></i></button></div>
+        <select id="libraries" aria-label="Channel library"><option value="">No library loaded</option></select>
+        <div class="stacked-actions">
+          <button class="button primary" id="import"><i data-lucide="file-up"></i>Import CSV</button>
+          <button class="button quiet" id="folder"><i data-lucide="folder-open"></i>Open library folder</button>
+        </div>
+        <p class="hint">Drop CSV files into the managed folder, then refresh. Yes, the refresh button actually refreshes.</p>
+      </section>
+
+      <section>
+        <div class="section-heading"><h2>Categories</h2><button class="text-button" data-clear="category">Clear</button></div>
+        <div id="categories" class="filter-list"></div>
+      </section>
+
+      <section>
+        <div class="section-heading"><h2>Countries</h2><button class="text-button" data-clear="country">Clear</button></div>
+        <div id="countries" class="filter-list"></div>
+      </section>
+
+      <section class="adult-control">
+        <label class="switch-row" for="show-adult">
+          <span><i data-lucide="badge-18"></i><strong>Show 18+ channels</strong></span>
+          <input id="show-adult" type="checkbox" role="switch">
+        </label>
+        <p>Adult-labelled rows stay hidden by default. This is a visibility control, not a content judgement.</p>
+      </section>
+    </aside>
+
+    <main class="content">
+      <div class="content-heading">
+        <div>
+          <p class="eyebrow" id="library-name">CHANNEL LIBRARY</p>
+          <h2>Channels</h2>
+          <p id="summary">Import a CSV to begin.</p>
+        </div>
+        <div class="content-actions">
+          <button class="button quiet" id="save"><i data-lucide="save"></i>Save</button>
+          <button class="button primary" id="add"><i data-lucide="plus"></i>Add channel</button>
+        </div>
+      </div>
+
+      <div class="table-wrap" id="channel-table" tabindex="-1">
+        <table>
+          <thead><tr><th scope="col">Channel</th><th scope="col">Category</th><th scope="col">Country</th><th scope="col">Language</th><th scope="col">State</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+          <tbody id="channel-rows"><tr><td colspan="6" class="empty">No channels yet. Import a CSV or add one by hand.</td></tr></tbody>
+        </table>
+      </div>
+      <p class="status" id="status" role="status" aria-live="polite">Ready.</p>
+    </main>
+  </div>
+
+  <dialog id="disclaimer">
+    <div class="dialog-mark"><i data-lucide="shield-check"></i></div>
+    <p class="eyebrow">BEFORE YOU CONTINUE</p>
+    <h2>Your playlist. Your responsibility.</h2>
+    <p>Use this software only with channels and streams you own or are authorised to watch. You’re responsible for applicable law, provider terms and any television licence requirements.</p>
+    <p>The app supplies no feeds, bypasses no access controls and doesn’t promise that a URL will play. Treat playlists containing tokens or credentials as private.</p>
+    <p class="fine-print">Independent software by TABARC-Code. Not affiliated with or endorsed by VideoLAN, any broadcaster or any service provider.</p>
+    <button class="button primary wide" id="accept">I understand — open the studio</button>
+  </dialog>
+
+  <dialog id="editor">
+    <form id="channel-form" method="dialog">
+      <div class="form-heading"><div><p class="eyebrow">CHANNEL DETAILS</p><h2 id="editor-title">Add channel</h2></div><button class="icon-button" value="cancel" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <input id="field-id" type="hidden">
+      <div class="form-grid">
+        <label class="span-2">Name<input id="field-name" required autocomplete="off"></label>
+        <label>Category<input id="field-category" list="category-options" autocomplete="off"></label>
+        <label>Country<input id="field-country" placeholder="GB or United Kingdom" autocomplete="off"></label>
+        <label>Language<input id="field-language" placeholder="English" autocomplete="off"></label>
+        <label>TVG ID<input id="field-tvg" autocomplete="off"></label>
+        <label class="span-2">Stream URL<input id="field-url" type="url" required spellcheck="false" placeholder="https://provider.example/live.m3u8"></label>
+        <label class="span-2">Logo URL<input id="field-logo" type="url" spellcheck="false"></label>
+        <label class="span-2">Notes<textarea id="field-notes" rows="3"></textarea></label>
+      </div>
+      <div class="checks"><label><input id="field-enabled" type="checkbox" checked> Enabled</label><label><input id="field-adult" type="checkbox"> Mark as 18+</label></div>
+      <div class="form-actions"><button class="button quiet" value="cancel">Cancel</button><button class="button primary" id="commit-channel" value="default">Save channel</button></div>
+      <datalist id="category-options"></datalist>
+    </form>
+  </dialog>
+
+  <script src="../../node_modules/lucide/dist/umd/lucide.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+
