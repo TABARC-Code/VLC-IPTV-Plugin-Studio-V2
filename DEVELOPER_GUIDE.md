@@ -14,7 +14,7 @@ The deployable extension stays self-contained so the user copies one script and 
 - close() asks VLC to deactivate the extension.
 - meta_changed() accepts metadata events sent by some VLC 3 builds.
 
-Button callbacks load/reload CSV, refresh filters, play/queue selected rows, queue filtered rows, export M3U and show guides. They run in VLC’s extension context. Network fetching, an AI client and background watcher threads are intentionally not part of this release.
+Button callbacks load/reload CSV, refresh filters, play/queue selected rows, queue filtered rows, export M3U and show guides. They run in VLC’s extension context. Network fetching and background watcher threads are outside this release.
 
 ## Testable helpers
 

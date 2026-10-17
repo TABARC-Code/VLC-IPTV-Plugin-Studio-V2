@@ -14,4 +14,4 @@ Set labels in the optional audience CSV column, or use recognised group names; s
 
 The extension remembers the CSV’s local filename separately in the VLC configuration directory. It does not rewrite the database. TVG identifiers and logos are retained in the M3U export, but there is no EPG download or guide display in this version.
 
-See [CSV_GUIDE.md](CSV_GUIDE.md) for file layout and [FAQ.md](FAQ.md) for limits and troubleshooting. Help & usage and CSV & AI guide inside VLC provide the short instructions without leaving the player.
+See [CSV_GUIDE.md](CSV_GUIDE.md) for file layout and [FAQ.md](FAQ.md) for limits and troubleshooting. Help & usage and CSV guide inside VLC provide the short instructions without leaving the player.

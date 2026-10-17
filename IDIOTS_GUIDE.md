@@ -77,13 +77,13 @@ For another channel, add a row with a different ID, save and reload. The extensi
 | A channel will not play | Try the same authorised stream directly in VLC's Open Network command. Check your provider's access requirements. Never post private URLs in a public issue. |
 | VLC reports authentication or DRM trouble | Ask your provider about supported playback. This extension does not supply custom authentication headers or DRM handling. |
 
-More answers are in [FAQ.md](FAQ.md). The optional [AI prompt](AI_CSV_PROMPT.md), also available through **CSV & AI guide** inside VLC, can format public details you already have. Check its output and add private credentials locally afterwards. The extension does not send your list to an AI service.
+More answers are in [FAQ.md](FAQ.md). The built-in CSV guide also covers the standard header and common formatting problems.
 
 ## Usage and privacy
 
 Do not misuse this software. Use only streams you are authorised to access. Follow applicable laws, provider terms and licensing requirements, including a UK TV Licence where required. Public playlist links and open-source licences do not grant broadcast rights. Use at your own risk; availability and playback are not guaranteed.
 
-Keep passwords and private stream tokens out of public repositories, screenshots, support requests and AI prompts. Back up your CSV before editing or updating. To uninstall, close VLC and remove only **iptv-channel-player.lua** from your user extension folder; keep your CSV and backups unless you deliberately choose to delete them.
+Keep passwords and private stream tokens out of public repositories, screenshots and support requests. Back up your CSV before editing or updating. To uninstall, close VLC and remove only **iptv-channel-player.lua** from your user extension folder; keep your CSV and backups unless you deliberately choose to delete them.
 
 ## Choose an audience or show XXX
 

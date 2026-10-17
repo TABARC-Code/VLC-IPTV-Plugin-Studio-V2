@@ -27,10 +27,10 @@ The maintained index and licence files were read. These links were not playback-
 
 For an M3U playlist, VLC itself can open its URL using Media → Open Network Stream (Open Network on some macOS builds). The native extension currently loads local CSV files, not remote M3U playlists.
 
-For a curated CSV, choose the individual channel records you want from a public list, verify their provenance and your permission, then format those records using [CSV_GUIDE.md](CSV_GUIDE.md). The optional [AI prompt](AI_CSV_PROMPT.md) can help with public metadata. Keep unverified or placeholder records disabled. The earlier Python companion has an M3U-to-CSV importer if you need it: https://github.com/TABARC-Code/VLC-IPTV-Plugin.
+For a curated CSV, choose the individual channel records you want from a public list, verify their provenance and your permission, then format those records using [CSV_GUIDE.md](CSV_GUIDE.md). Keep unverified or placeholder records disabled. The earlier Python companion has an M3U-to-CSV importer if you need it: https://github.com/TABARC-Code/VLC-IPTV-Plugin.
 
 ## Use at your own risk
 
-Do not misuse this software. Use only streams you are authorised to access. You are responsible for applicable laws, provider terms and licensing requirements, including a UK TV Licence where required. A free playlist, an open-source licence or a publicly reachable URL does not grant rights to the video itself. Availability and playback are not guaranteed. Do not access or redistribute content unlawfully; keep private tokens out of public lists, repositories and AI prompts.
+Do not misuse this software. Use only streams you are authorised to access. You are responsible for applicable laws, provider terms and licensing requirements, including a UK TV Licence where required. A free playlist, an open-source licence or a publicly reachable URL does not grant rights to the video itself. Availability and playback are not guaranteed. Do not access or redistribute content unlawfully; keep private tokens out of public lists, repositories and support requests.
 
 Another candidate, Free-TV/IPTV, was inspected but no root licence file was found in the directory listing. It is therefore not presented here as a verified freely licensed source.

@@ -10,7 +10,7 @@ if (Test-Path -LiteralPath $script) {
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'iptv-channel-player.lua') -Destination $script -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'iptv-channel-player-assets\brand.png') -Destination (Join-Path $assets 'brand.png') -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README.md') -Destination (Join-Path $assets 'README.md') -Force
-foreach ($name in @('CSV_GUIDE.md', 'AI_CSV_PROMPT.md', 'IDIOTS_GUIDE.md')) {
+foreach ($name in @('CSV_GUIDE.md', 'IDIOTS_GUIDE.md')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination (Join-Path $assets $name) -Force
 }
 $csv = Join-Path $assets 'channels.csv'

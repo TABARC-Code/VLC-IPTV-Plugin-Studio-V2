@@ -35,7 +35,7 @@ if [ "$dry_run" = true ]; then
   exit 0
 fi
 # Verify the extracted package before changing an existing installation.
-for required in iptv-channel-player.lua iptv-channel-player-assets/brand.png iptv-channel-player-assets/channels.csv README.md CSV_GUIDE.md AI_CSV_PROMPT.md IDIOTS_GUIDE.md; do
+for required in iptv-channel-player.lua iptv-channel-player-assets/brand.png iptv-channel-player-assets/channels.csv README.md CSV_GUIDE.md IDIOTS_GUIDE.md; do
   [ -f "$source_dir/$required" ] || { printf '%s\n' "Missing package file: $required. Extract the complete release ZIP." >&2; exit 1; }
 done
 mkdir -p "$assets"
@@ -46,7 +46,7 @@ fi
 cp "$source_dir/iptv-channel-player.lua" "$target/iptv-channel-player.lua"
 cp "$source_dir/iptv-channel-player-assets/brand.png" "$assets/brand.png"
 cp "$source_dir/README.md" "$assets/README.md"
-for guide in CSV_GUIDE.md AI_CSV_PROMPT.md IDIOTS_GUIDE.md; do
+for guide in CSV_GUIDE.md IDIOTS_GUIDE.md; do
   cp "$source_dir/$guide" "$assets/$guide"
 done
 if [ ! -e "$assets/channels.csv" ]; then

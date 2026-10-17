@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.5.2 — 17 October 2026
+
+- Consolidated the Home Assistant camera bridge and theme-aware Lovelace interface.
+- Retired obsolete reference documents and maintenance records from the current package.
+- Simplified the in-player CSV help and adjusted installers to package the retained guides.
+- Playback and channel parsing remain unchanged.
+
 Actual changes only. Release dates and notes are recorded when the work is published.
 
 ## 1.5.1 — 15 October 2026
@@ -19,9 +26,7 @@ Actual changes only. Release dates and notes are recorded when the work is publi
 
 ## 1.4.10 — 15 October 2026
 
-Added a copyable AI source-research prompt with citations, licence-file checks and a clear distinction between indexed links, endpoint checks and playback. Retained the CSV formatting prompt and added optional M3U conversion instructions. Included authorised-use and privacy wording for the repository edition.
-
-The extension does not browse for channels or send lists to AI services. Runtime behaviour is unchanged; the packaged guide is copied by the existing installers.
+Added source-research documentation covering citations, licence checks, indexed links and endpoint verification. The reference guide was retired from subsequent packages.
 
 ## 1.4.9 — 15 October 2026
 
@@ -43,7 +48,7 @@ Initial release in the separate VLC-IPTV-Plugin-Studio-V2 repository. The earlie
 - Added validated CSV loading, group/search filters, selected playback and queueing.
 - Added M3U export with replacement confirmation, backup and recovery handling.
 - Added Windows, macOS and Linux user-local installers that preserve an existing channel CSV.
-- Added beginner documentation, worked CSV files and a copyable AI formatting prompt, also accessible inside VLC.
+- Added beginner documentation, worked CSV files and an in-player CSV guide.
 - Checked Lua 5.1 compatibility, installer upgrades and discovery/activation in Linux VLC 3.0.23. Windows/macOS desktop verification remains outstanding.
 
 The extension’s menu label was adjusted after testing VLC’s use of shortdesc. The empty help browser was also removed from the default layout. Neither needed a framework; both needed a look at the actual window.

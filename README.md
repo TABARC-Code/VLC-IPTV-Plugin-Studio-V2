@@ -1,6 +1,6 @@
 # IPTV Channel Player V2
 
-**TABARC-Code · v1.5.1 · a native VLC Lua extension**
+**TABARC-Code · v1.5.2 · a native VLC Lua extension**
 
 This version opens inside VLC. It reads your channel CSV, lets you search or choose a group, and plays a selected stream using VLC's own player. Queue buttons add channels to the existing playlist. Python is not required to install or run this extension.
 
@@ -8,7 +8,7 @@ I have kept the channel database separate from the code. Editing a television ch
 
 ## Guides
 
-[Complete beginner](IDIOTS_GUIDE.md) · [CSV from scratch](CSV_GUIDE.md) · [AI source research and file prompts](AI_CSV_PROMPT.md) · [User guide](USER_GUIDE.md) · [Setup](SETUP.md) · [FAQ](FAQ.md) · [Roadmap](ROADMAP.md) · [Developer guide](DEVELOPER_GUIDE.md)
+[Complete beginner](IDIOTS_GUIDE.md) · [CSV from scratch](CSV_GUIDE.md) · [User guide](USER_GUIDE.md) · [Setup](SETUP.md) · [FAQ](FAQ.md) · [Roadmap](ROADMAP.md) · [Developer guide](DEVELOPER_GUIDE.md)
 
 ## Reusable sources and licences
 
@@ -38,7 +38,6 @@ Run `sh install-unix.sh --dry-run` to print the destination without installing. 
 
 CI checks the installer on both macOS and Linux. These checks cover files, paths and upgrades; they do not exercise the graphical VLC interface or stream playback. See [SETUP.md](SETUP.md) and [VALIDATION.md](VALIDATION.md).
 
-**A note from me:** The Linux and Mac installation components were vibe coded. They're outside my comfort zone, and I wanted to confirm that the plugin could work on those systems too. Automated installer checks are part of that process; testing the interface and playback inside VLC still needs doing.
 
 ## Play your first channel
 
