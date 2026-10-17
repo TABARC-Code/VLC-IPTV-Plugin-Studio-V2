@@ -1,0 +1,33 @@
+name: Branch retirement
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/branch-retirement.yml'
+permissions:
+  contents: write
+jobs:
+  retire:
+    if: github.repository == 'TABARC-Code/VLC-IPTV-Plugin-Studio-V2'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retire merged feature branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS='|' read -r branch pr expected; do
+            [[ -n "$branch" ]] || continue
+            merged=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$pr" --jq '.merged')
+            [[ "$merged" == "true" ]] || { echo "Pull request $pr is not merged"; exit 1; }
+            actual=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$branch" --jq '.object.sha')
+            [[ "$actual" == "$expected" ]] || { echo "Branch $branch has changed"; exit 1; }
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$branch"
+            echo "Retired $branch"
+          done <<'MERGED_BRANCHES'
+          feature/audience-filters|1|d649e1be44a29b6c3303a5d74d63742c1172d36c
+          fix/macos-linux-installation|2|04fa2e381e0c2f93b815e34b3a36e0ba6048efbc
+          feature/v1.4.7-studio-foundation|3|804af90043c0b1e9b9e4120e393b8aa5231b1d24
+          feature/ha-camera-bridge|4|a8390afc877ac0ada4fd0f985a4c6ff6d485d1c0
+          MERGED_BRANCHES
