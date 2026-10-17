@@ -1,0 +1,6 @@
+node_modules/
+.env
+.env.*
+*.local.json
+*.m3u
+*.m3u8
