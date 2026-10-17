@@ -1,0 +1,14 @@
+{
+  "name": "@tabarc/ha-camera-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Optional Home Assistant camera discovery for IPTV Studio V2.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "cameras": "node src/cli.cjs",
+    "test": "node --test tests/*.test.cjs"
+  }
+}
