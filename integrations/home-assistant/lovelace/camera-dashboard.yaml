@@ -1,0 +1,32 @@
+# Example dashboard. Replace example entity IDs before saving.
+# Built-in cards follow the active Home Assistant theme.
+title: IPTV Cameras
+views:
+  - title: Cameras
+    path: cameras
+    icon: mdi:cctv
+    cards:
+      - type: custom:tabarc-camera-list
+        title: Available cameras
+        show_search: true
+        show_unavailable: true
+        show_state: true
+      - type: grid
+        title: Live views
+        columns: 2
+        square: false
+        cards:
+          - type: picture-entity
+            entity: camera.front_door
+            camera_view: live
+            show_name: true
+            show_state: false
+            tap_action:
+              action: more-info
+          - type: picture-entity
+            entity: camera.workshop
+            camera_view: live
+            show_name: true
+            show_state: false
+            tap_action:
+              action: more-info

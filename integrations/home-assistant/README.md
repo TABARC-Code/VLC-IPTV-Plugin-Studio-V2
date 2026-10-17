@@ -8,6 +8,10 @@ The command queries Home Assistant's REST API for camera entities and prints the
 
 No stream is created or played yet. A Home Assistant camera entity alone does not guarantee a stable RTSP or HTTP address usable by VLC. A later stage can associate selected entities with explicitly configured RTSP sources or go2rtc streams.
 
+## Lovelace dashboard
+
+The optional [Lovelace card and native dashboard examples](lovelace/README.md) provide a theme-aware camera directory and live-camera cards inside Home Assistant. Camera discovery uses the existing Home Assistant session, without a separate dashboard token. This is independent of VLC playback control.
+
 ## Requirements
 
 - Node.js 20 or later.
