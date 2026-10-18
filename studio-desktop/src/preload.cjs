@@ -5,6 +5,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('studio', Object.freeze({
   appInfo: () => ipcRenderer.invoke('app:info'),
   chooseCsv: () => ipcRenderer.invoke('library:choose-csv'),
+  chooseM3u: () => ipcRenderer.invoke('library:choose-m3u'),
   listLibraries: () => ipcRenderer.invoke('library:list'),
   loadLibrary: name => ipcRenderer.invoke('library:load', name),
   saveLibrary: payload => ipcRenderer.invoke('library:save', payload),

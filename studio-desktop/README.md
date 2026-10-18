@@ -11,6 +11,7 @@ No channels, subscriptions or access credentials are supplied. This is plumbing,
 ## What works
 
 - Import a UTF-8 CSV through the app, or place one in its managed `libraries` folder.
+- Import local M3U channel lists as disabled candidates; the app leaves original files untouched and rejects HLS segment manifests.
 - Organise channels by category, country and language.
 - Search instantly without changing the underlying file.
 - Add, edit, enable, disable and label individual channels as 18+.

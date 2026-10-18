@@ -175,6 +175,18 @@ $('#import').addEventListener('click', () => guarded(async () => {
   state.library = result.name; state.channels = result.channels; state.dirty = false;
   await refreshLibraries(result.name); render(); say(`Imported ${result.channels.length} channels into ${result.name}.`);
 }));
+$('#import-m3u').addEventListener('click', () => guarded(async () => {
+  const result = await window.studio.chooseM3u();
+  if (!result) return;
+  state.library = result.name;
+  state.channels = result.channels;
+  state.dirty = false;
+  state.categories.clear();
+  state.countries.clear();
+  await refreshLibraries(result.name);
+  render();
+  say(`Imported ${result.channels.length} disabled channel candidates. Review each source before enabling.`);
+}));
 $('#save').addEventListener('click', () => guarded(async () => {
   const name = state.library || prompt('Library filename', 'channels.csv');
   if (!name) return;

@@ -8,6 +8,7 @@ const path = require('node:path');
 const os = require('node:os');
 const crypto = require('node:crypto');
 const { MAX_CSV_BYTES, m3u, readChannels, writeChannels } = require('./core/channels.cjs');
+const { parseM3u } = require('./core/m3u.cjs');
 
 const VERSION = '1.4.7';
 let window;
@@ -113,6 +114,25 @@ ipcMain.handle('library:choose-csv', async () => {
   const channels = readChannels(text);
   await ensureLibrary();
   let name = safeLibraryName(path.basename(source));
+  const parsed = path.parse(name);
+  let suffix = 2;
+  while (fsSync.existsSync(path.join(libraryDir(), name))) name = `${parsed.name}-${suffix++}${parsed.ext}`;
+  await atomicWrite(path.join(libraryDir(), name), writeChannels(channels));
+  return { name, channels };
+});
+
+ipcMain.handle('library:choose-m3u', async () => {
+  const result = await dialog.showOpenDialog(window, {
+    title: 'Import a local channel playlist', properties: ['openFile'],
+    filters: [{ name: 'M3U playlist', extensions: ['m3u', 'm3u8'] }]
+  });
+  if (result.canceled) return null;
+  const source = result.filePaths[0];
+  const stat = await fs.stat(source);
+  if (stat.size > MAX_CSV_BYTES) throw new Error('That playlist is larger than 20 MB.');
+  const channels = parseM3u(await fs.readFile(source, 'utf8'));
+  await ensureLibrary();
+  let name = safeLibraryName(path.parse(source).name + '.csv');
   const parsed = path.parse(name);
   let suffix = 2;
   while (fsSync.existsSync(path.join(libraryDir(), name))) name = `${parsed.name}-${suffix++}${parsed.ext}`;
