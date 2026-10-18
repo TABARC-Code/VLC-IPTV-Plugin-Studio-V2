@@ -63,7 +63,7 @@ test('Studio export has the original nine columns and preserves explicit XXX lab
   assert.equal(sample[0].adult, true);
   assert.equal(sample[0].audience, 'xxx');
   const output = writeChannels(sample);
-  assert.equal(output.split('\\r\\n')[0].replaceAll('\\r\\n',''), HEADER);
+  assert.equal(output.split('\r\n')[0], HEADER);
   assert.deepEqual(readChannels(output), sample);
 });
 

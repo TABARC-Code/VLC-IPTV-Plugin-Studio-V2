@@ -1,0 +1,34 @@
+name: Studio desktop checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'studio-desktop/**'
+      - '.github/workflows/studio-checks.yml'
+  pull_request:
+    paths:
+      - 'studio-desktop/**'
+      - '.github/workflows/studio-checks.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: studio-desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: studio-desktop/package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - run: npm run check

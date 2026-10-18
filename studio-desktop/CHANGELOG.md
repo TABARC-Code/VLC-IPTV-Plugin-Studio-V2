@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.0 — 18 October 2026
+
+- Saved channel CSV format is compatible with the native VLC extension, including explicit 18+ and XXX audience metadata.
+- Added local M3U import. Imported sources remain disabled pending review.
+- Added a non-destructive duplicate review panel for stream URLs and guide identifiers.
+- Added regression and syntax checks to repository CI.
+
+Live playback and graphical operation still need real-hardware verification.
+
 ## 1.4.7 — 2026-10-14
 
 ### Added

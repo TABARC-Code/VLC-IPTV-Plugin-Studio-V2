@@ -11,7 +11,7 @@ const { MAX_CSV_BYTES, m3u, readChannels, writeChannels } = require('./core/chan
 const { parseM3u } = require('./core/m3u.cjs');
 const { duplicateCandidates } = require('./core/duplicates.cjs');
 
-const VERSION = '1.4.7';
+const VERSION = '3.1.0';
 let window;
 let customVlcPath = null;
 
