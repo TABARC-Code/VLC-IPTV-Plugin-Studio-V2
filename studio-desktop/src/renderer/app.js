@@ -107,6 +107,7 @@ function openEditor(channel = null) {
   $('#field-notes').value = channel?.notes || '';
   $('#field-enabled').checked = channel?.enabled ?? true;
   $('#field-adult').checked = channel?.adult ?? false;
+  $('#field-audience').value = channel?.audience || '';
   $('#editor').showModal();
   $('#field-name').focus();
 }
@@ -118,7 +119,7 @@ function commitEditor(event) {
     id: formValue('#field-id'), name: formValue('#field-name'), category: formValue('#field-category'),
     country: formValue('#field-country'), language: formValue('#field-language'), stream_url: formValue('#field-url'),
     logo_url: formValue('#field-logo'), tvg_id: formValue('#field-tvg'), enabled: $('#field-enabled').checked,
-    adult: $('#field-adult').checked, notes: formValue('#field-notes')
+    adult: $('#field-adult').checked, audience: formValue('#field-audience'), notes: formValue('#field-notes')
   };
   const index = state.channels.findIndex(item => item.id === state.editingId);
   if (index >= 0) state.channels[index] = channel; else state.channels.push(channel);
@@ -146,6 +147,14 @@ $$('[data-clear]').forEach(button => button.addEventListener('click', () => {
   (button.dataset.clear === 'category' ? state.categories : state.countries).clear(); render();
 }));
 $('#show-adult').addEventListener('change', event => { state.showAdult = event.target.checked; render(); });
+$('#field-audience').addEventListener('change', event => {
+  $('#field-adult').checked = ['18+', 'xxx'].includes(event.target.value);
+});
+$('#field-adult').addEventListener('change', event => {
+  const rating = $('#field-audience');
+  if (event.target.checked && !['18+', 'xxx'].includes(rating.value)) rating.value = '18+';
+  if (!event.target.checked && ['18+', 'xxx'].includes(rating.value)) rating.value = '';
+});
 $('#add').addEventListener('click', () => openEditor());
 $('#channel-form').addEventListener('submit', commitEditor);
 $('#channel-rows').addEventListener('click', event => {
