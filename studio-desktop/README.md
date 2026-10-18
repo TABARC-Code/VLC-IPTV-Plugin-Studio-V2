@@ -18,6 +18,7 @@ No channels, subscriptions or access credentials are supplied. This is plumbing,
 - Hide 18+ rows by default; reveal them with an explicit switch.
 - Save CSV changes atomically, so an interrupted write does not casually eat the last good file.
 - Export the currently visible, enabled channels as M3U.
+- Review potential duplicate streams and guide IDs without automatically merging or deleting entries.
 - Launch that same view in VLC without building a shell command.
 - Accept legacy `group` and `group-title` headings from the original app as `category`.
 

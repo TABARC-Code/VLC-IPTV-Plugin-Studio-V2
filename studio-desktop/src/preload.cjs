@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('studio', Object.freeze({
   openLibraryFolder: () => ipcRenderer.invoke('library:open-folder'),
   launchVlc: payload => ipcRenderer.invoke('vlc:launch', payload),
   chooseVlc: () => ipcRenderer.invoke('vlc:choose'),
-  exportPlaylist: payload => ipcRenderer.invoke('playlist:export', payload)
+  exportPlaylist: payload => ipcRenderer.invoke('playlist:export', payload),
+  reviewDuplicates: channels => ipcRenderer.invoke('library:duplicates', channels)
 }));
 

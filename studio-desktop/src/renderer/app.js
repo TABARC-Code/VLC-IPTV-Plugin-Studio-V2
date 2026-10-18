@@ -187,6 +187,30 @@ $('#import-m3u').addEventListener('click', () => guarded(async () => {
   render();
   say(`Imported ${result.channels.length} disabled channel candidates. Review each source before enabling.`);
 }));
+$('#duplicates').addEventListener('click', () => guarded(async () => {
+  const groups = await window.studio.reviewDuplicates(state.channels);
+  const report = $('#duplicate-results');
+  report.replaceChildren();
+  if (!groups.length) {
+    const message = document.createElement('p');
+    message.textContent = 'No matching stream URLs or guide IDs were found.';
+    report.append(message);
+  }
+  for (const group of groups) {
+    const section = document.createElement('section');
+    const title = document.createElement('h3');
+    title.textContent = group.reason;
+    const list = document.createElement('ul');
+    for (const item of group.channels) {
+      const row = document.createElement('li');
+      row.textContent = `${item.name} (${item.id})`;
+      list.append(row);
+    }
+    section.append(title, list);
+    report.append(section);
+  }
+  $('#duplicate-dialog').showModal();
+}));
 $('#save').addEventListener('click', () => guarded(async () => {
   const name = state.library || prompt('Library filename', 'channels.csv');
   if (!name) return;

@@ -69,6 +69,7 @@
           <p id="summary">Import a CSV to begin.</p>
         </div>
         <div class="content-actions">
+          <button class="button quiet" id="duplicates"><i data-lucide="copy-check"></i>Review duplicates</button>
           <button class="button quiet" id="save"><i data-lucide="save"></i>Save</button>
           <button class="button primary" id="add"><i data-lucide="plus"></i>Add channel</button>
         </div>
@@ -92,6 +93,15 @@
     <p>The app supplies no feeds, bypasses no access controls and doesn’t promise that a URL will play. Treat playlists containing tokens or credentials as private.</p>
     <p class="fine-print">Independent software by TABARC-Code. Not affiliated with or endorsed by VideoLAN, any broadcaster or any service provider.</p>
     <button class="button primary wide" id="accept">I understand — open the studio</button>
+  </dialog>
+
+  <dialog id="duplicate-dialog">
+    <form method="dialog">
+      <h2>Possible duplicate channels</h2>
+      <p>Review matches before editing. No records are removed automatically.</p>
+      <div id="duplicate-results"></div>
+      <button class="button primary" value="close">Close</button>
+    </form>
   </dialog>
 
   <dialog id="editor">

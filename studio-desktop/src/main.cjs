@@ -9,6 +9,7 @@ const os = require('node:os');
 const crypto = require('node:crypto');
 const { MAX_CSV_BYTES, m3u, readChannels, writeChannels } = require('./core/channels.cjs');
 const { parseM3u } = require('./core/m3u.cjs');
+const { duplicateCandidates } = require('./core/duplicates.cjs');
 
 const VERSION = '1.4.7';
 let window;
@@ -152,6 +153,8 @@ ipcMain.handle('library:save', async (_event, payload) => {
   await atomicWrite(path.join(libraryDir(), name), output);
   return { name };
 });
+
+ipcMain.handle('library:duplicates', async (_event, channels) => duplicateCandidates(channels));
 
 ipcMain.handle('library:open-folder', async () => {
   await ensureLibrary();
