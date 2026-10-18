@@ -4,8 +4,14 @@ const crypto = require('node:crypto');
 
 const FIELDS = Object.freeze([
   'id', 'name', 'category', 'country', 'language', 'stream_url',
-  'logo_url', 'tvg_id', 'enabled', 'adult', 'notes'
+  'logo_url', 'tvg_id', 'enabled', 'adult', 'notes', 'audience'
 ]);
+// Keep the saved CSV readable by the original VLC Lua extension.
+const EXPORT_FIELDS = Object.freeze([
+  'id', 'name', 'group', 'country', 'language', 'stream_url',
+  'logo_url', 'tvg_id', 'enabled', 'audience', 'adult', 'notes'
+]);
+const AUDIENCES = new Set(['cartoons', '12+', '16+', '18+', 'xxx', 'unrated']);
 const MAX_CSV_BYTES = 20 * 1024 * 1024;
 const TRUTHY = new Set(['true', '1', 'yes', 'y']);
 const FALSY = new Set(['false', '0', 'no', 'n', '']);
@@ -73,6 +79,13 @@ function normaliseHeaders(headers) {
   });
 }
 
+function audienceFromGroup(group) {
+  const value = clean(group).toLowerCase();
+  if (value === 'adult' || value === 'xxx' || value === 'adult (xxx)') return 'xxx';
+  if (value === 'animation' || value === 'cartoons') return 'cartoons';
+  return AUDIENCES.has(value) ? value : 'unrated';
+}
+
 function stableId(channel, rowNumber) {
   const material = `${channel.name}\0${channel.stream_url}\0${rowNumber}`;
   return crypto.createHash('sha256').update(material).digest('hex').slice(0, 12);
@@ -82,6 +95,17 @@ function validateChannel(raw, rowNumber, seen = new Set()) {
   const channel = Object.fromEntries(FIELDS.map(field => [field, clean(raw[field])]));
   channel.enabled = toBoolean(raw.enabled ?? 'true', 'enabled', rowNumber);
   channel.adult = toBoolean(raw.adult ?? 'false', 'adult', rowNumber);
+  channel.audience = clean(raw.audience).toLowerCase();
+  if (channel.audience && !AUDIENCES.has(channel.audience)) {
+    throw new Error(`Row ${rowNumber}: unsupported audience label.`);
+  }
+  // An explicit rating wins; older adult flags map to 18+ rather than XXX.
+  if (!channel.audience) {
+    const groupAudience = audienceFromGroup(channel.category);
+    if (groupAudience === 'xxx' || groupAudience === '18+') channel.audience = groupAudience;
+    else if (channel.adult) channel.audience = '18+';
+  }
+  channel.adult = channel.audience === 'xxx' || channel.audience === '18+';
   if (!channel.name) throw new Error(`Row ${rowNumber}: name is required.`);
   if (!channel.stream_url) throw new Error(`Row ${rowNumber}: stream_url is required.`);
   if (/[\u0000\r\n]/.test(channel.stream_url)) throw new Error(`Row ${rowNumber}: stream_url must fit on one line.`);
@@ -104,6 +128,7 @@ function readChannels(text) {
   const records = parseCsv(text);
   if (!records.length) return [];
   const headers = normaliseHeaders(records.shift());
+  if (new Set(headers).size !== headers.length) throw new Error('CSV has duplicate or equivalent columns.');
   for (const required of ['name', 'stream_url']) {
     if (!headers.includes(required)) throw new Error(`CSV needs a ${required} column.`);
   }
@@ -125,8 +150,12 @@ function quote(value) {
 function writeChannels(channels) {
   const seen = new Set();
   const checked = channels.map((channel, index) => validateChannel(channel, index + 2, seen));
-  const lines = [FIELDS.join(',')];
-  for (const channel of checked) lines.push(FIELDS.map(field => quote(channel[field])).join(','));
+  const lines = [EXPORT_FIELDS.join(',')];
+  for (const channel of checked) {
+    // VLC's native CSV reader uses one physical line per channel.
+    if (/[\r\n]/.test(channel.notes)) throw new Error('Channel notes must fit on one line for VLC compatibility.');
+    lines.push(EXPORT_FIELDS.map(field => quote(field === 'group' ? channel.category : channel[field])).join(','));
+  }
   return `${lines.join('\r\n')}\r\n`;
 }
 
@@ -152,5 +181,5 @@ function facets(channels) {
   return { categories: count('category'), countries: count('country') };
 }
 
-module.exports = { FIELDS, MAX_CSV_BYTES, facets, m3u, parseCsv, readChannels, validateChannel, writeChannels };
+module.exports = { AUDIENCES, EXPORT_FIELDS, FIELDS, MAX_CSV_BYTES, audienceFromGroup, facets, m3u, parseCsv, readChannels, validateChannel, writeChannels };
 

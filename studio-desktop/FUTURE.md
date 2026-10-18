@@ -8,7 +8,7 @@ This is a live list, not invented archaeology.
 - [x] Atomic saving and constrained VLC launch.
 - [ ] Drag-and-drop category reassignment.
 - [ ] EPG/XMLTV mapping with local caching and clear expiry.
-- [ ] Duplicate review based on normalised URLs and TVG IDs.
+- [x] Non-destructive duplicate review by exact stream URL and guide ID.
 - [ ] Signed installers for supported platforms.
 - [ ] Optional Rust/Tauri shell after equivalent integration tests exist.
 - [ ] Keyboard-driven bulk editing.

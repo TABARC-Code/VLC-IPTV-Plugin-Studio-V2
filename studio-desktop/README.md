@@ -2,7 +2,7 @@
 
 **A local-first channel organiser for people who want VLC to play the video and a calmer tool to manage the list.**
 
-Version **1.4.7** is a clean V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps 18+ rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
+Version **3.1.0** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps 18+ rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
 
 No channels, subscriptions or access credentials are supplied. This is plumbing, not a pirate treasure map.
 
@@ -11,14 +11,16 @@ No channels, subscriptions or access credentials are supplied. This is plumbing,
 ## What works
 
 - Import a UTF-8 CSV through the app, or place one in its managed `libraries` folder.
+- Import local M3U channel lists as disabled candidates; the app leaves original files untouched and rejects HLS segment manifests.
 - Organise channels by category, country and language.
 - Search instantly without changing the underlying file.
 - Add, edit, enable, disable and label individual channels as 18+.
 - Hide 18+ rows by default; reveal them with an explicit switch.
 - Save CSV changes atomically, so an interrupted write does not casually eat the last good file.
 - Export the currently visible, enabled channels as M3U.
+- Review potential duplicate streams and guide IDs without automatically merging or deleting entries.
 - Launch that same view in VLC without building a shell command.
-- Accept legacy `group` and `group-title` headings from the original app as `category`.
+- Read and write the original VLC-compatible `group` CSV format while preserving explicit audience labels.
 
 ## Why it is a companion app
 

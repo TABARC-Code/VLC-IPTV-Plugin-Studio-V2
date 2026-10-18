@@ -15,7 +15,7 @@
         <img src="../../assets/icon.png" alt="" width="42" height="42">
         <div>
           <p class="eyebrow">TABARC-CODE</p>
-          <h1>VLC IPTV Studio <span id="version">v1.4.7</span></h1>
+          <h1>VLC IPTV Studio <span id="version">v3.1.0</span></h1>
         </div>
       </div>
       <label class="search-box">
@@ -36,6 +36,7 @@
         <select id="libraries" aria-label="Channel library"><option value="">No library loaded</option></select>
         <div class="stacked-actions">
           <button class="button primary" id="import"><i data-lucide="file-up"></i>Import CSV</button>
+          <button class="button quiet" id="import-m3u"><i data-lucide="list-plus"></i>Import M3U</button>
           <button class="button quiet" id="folder"><i data-lucide="folder-open"></i>Open library folder</button>
         </div>
         <p class="hint">Drop CSV files into the managed folder, then refresh. Yes, the refresh button actually refreshes.</p>
@@ -68,6 +69,7 @@
           <p id="summary">Import a CSV to begin.</p>
         </div>
         <div class="content-actions">
+          <button class="button quiet" id="duplicates"><i data-lucide="copy-check"></i>Review duplicates</button>
           <button class="button quiet" id="save"><i data-lucide="save"></i>Save</button>
           <button class="button primary" id="add"><i data-lucide="plus"></i>Add channel</button>
         </div>
@@ -93,6 +95,15 @@
     <button class="button primary wide" id="accept">I understand — open the studio</button>
   </dialog>
 
+  <dialog id="duplicate-dialog">
+    <form method="dialog">
+      <h2>Possible duplicate channels</h2>
+      <p>Review matches before editing. No records are removed automatically.</p>
+      <div id="duplicate-results"></div>
+      <button class="button primary" value="close">Close</button>
+    </form>
+  </dialog>
+
   <dialog id="editor">
     <form id="channel-form" method="dialog">
       <div class="form-heading"><div><p class="eyebrow">CHANNEL DETAILS</p><h2 id="editor-title">Add channel</h2></div><button class="icon-button" value="cancel" aria-label="Close"><i data-lucide="x"></i></button></div>
@@ -100,6 +111,7 @@
       <div class="form-grid">
         <label class="span-2">Name<input id="field-name" required autocomplete="off"></label>
         <label>Category<input id="field-category" list="category-options" autocomplete="off"></label>
+        <label>Audience<select id="field-audience"><option value="">From category / unrated</option><option value="cartoons">Cartoons</option><option value="12+">12+</option><option value="16+">16+</option><option value="18+">18+</option><option value="xxx">XXX</option><option value="unrated">Unrated</option></select></label>
         <label>Country<input id="field-country" placeholder="GB or United Kingdom" autocomplete="off"></label>
         <label>Language<input id="field-language" placeholder="English" autocomplete="off"></label>
         <label>TVG ID<input id="field-tvg" autocomplete="off"></label>

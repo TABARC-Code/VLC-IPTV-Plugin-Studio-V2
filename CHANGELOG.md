@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.1.0 — 18 October 2026
+
+Four separately recorded development changes:
+
+- High: Studio saves VLC-compatible channel CSV files, retaining 18+ and XXX audience labels and rejecting duplicate equivalent headings.
+- Medium: Studio imports local M3U playlists as disabled channel records for review; it rejects HLS segment manifests.
+- Medium: Studio reports repeated stream URLs and programme-guide identifiers without deleting records.
+- Medium: Studio regression and syntax checks run in the root release gate, alongside independent cross-platform runner checks.
+
+Both applications now identify as 3.1.0. Home Assistant and Lovelace remain optional. Real VLC playback still needs platform testing.
+
 ## 1.5.2 — 17 October 2026
 
 - Consolidated the Home Assistant camera bridge and theme-aware Lovelace interface.
