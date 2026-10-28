@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.5.0 — 28 October 2026
+
+- Added country and language dropdowns to the native VLC extension, populated from non-empty metadata in the loaded CSV.
+- Applied group, country, language, search and audience choices through one filter path used by display, stale-selection checks, filtered queueing and M3U export.
+- Added regression coverage for exact and combined metadata filters plus the native control layout.
+- Kept the 3.4.1 Studio security, unsaved-work and temporary-playlist protections unchanged; both applications now identify as 3.5.0.
+
+Automated checks do not establish successful playback or desktop rendering. The additional native control row still needs real VLC validation across supported platforms and display scales.
+
 ## 3.4.1 — 28 October 2026
 
 - High: Studio VLC launches now use private, application-owned temporary playlists. Files are removed when VLC exits, when Studio closes, and on the next clean start after an interrupted session; launch failures are reported instead of becoming uncaught process errors.

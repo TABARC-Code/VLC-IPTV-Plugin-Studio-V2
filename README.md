@@ -1,12 +1,12 @@
 # IPTV Channel Player V2
 
-**TABARC-Code · v3.4.1 · a native VLC Lua extension**
+**TABARC-Code · v3.5.0 · a native VLC Lua extension**
 
 This version opens inside VLC. It reads your channel CSV, lets you search or choose a group, and plays a selected stream using VLC's own player. Queue buttons add channels to the existing playlist. Python is not required to install or run this extension.
 
 I have kept the channel database separate from the code. Editing a television channel should take one spreadsheet row, not a small archaeological expedition through a script.
 
-Version 3.4.1 also includes an optional desktop Studio with VLC-compatible channel CSV files and a separate Home Assistant camera bridge. The Studio now removes its private temporary VLC playlists, rejects oversized edit payloads, protects unsaved work and accepts IPC calls only from its own renderer. The native VLC extension still runs independently.
+Version 3.5.0 also includes the optional desktop Studio and Home Assistant camera bridge from 3.4.1. The native extension now adds country and language selectors built from the loaded CSV, closing a basic organisation gap without changing the file format. The Studio’s security and data-boundary protections remain intact.
 
 ## Guides
 
@@ -53,9 +53,9 @@ You can use another CSV instead: copy its full local path into the CSV field. Wi
 
 ## Search, queue and export
 
-Type a search, choose a group, or tick Show disabled, then choose **Apply filter**. Search covers names, groups, countries and languages using simple case folding. Disabled records are marked and cannot be played from the extension.
+Type a search; choose a group, country or language; or tick Show disabled, then choose **Apply filter**. Country and language choices come from non-empty values in the loaded CSV. Search still covers names, groups, countries and languages using simple case folding. Disabled records are marked and cannot be played from the extension.
 
-**Queue selected** adds your selected enabled channels without starting them. **Queue filtered** adds enabled records matching the current search, group and audience settings. These actions append to the current VLC playlist; they do not clear it. Repeated clicks intentionally add another copy.
+**Queue selected** adds your selected enabled channels without starting them. **Queue filtered** adds enabled records matching the current search, group, country, language and audience settings. These actions append to the current VLC playlist; they do not clear it. Repeated clicks intentionally add another copy.
 
 For another IPTV app, enter a local filename ending in .m3u or .m3u8 and choose **Export M3U**. Export uses enabled rows matching the current filters, including matches beyond the 1,000-row display cap. If the output already exists, the extension asks for a second click and keeps the old file under a .backup name. Keep those backups private too if the URLs contain access tokens.
 

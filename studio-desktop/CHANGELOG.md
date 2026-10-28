@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.0 — 28 October 2026
+
+- Aligned Studio’s release identity with the native VLC extension’s new country and language filters.
+- Retained the 3.4.1 Studio runtime, IPC, unsaved-work and private temporary-playlist behaviour without functional changes.
+
 ## 3.4.1 — 28 October 2026
 
 - Private temporary VLC playlists are deleted after VLC exits, when Studio closes, and during the next clean start after an interrupted run.

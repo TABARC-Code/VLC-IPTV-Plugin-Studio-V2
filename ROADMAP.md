@@ -14,13 +14,17 @@ Audience dropdown, XXX visibility checkbox, optional audience CSV metadata and l
 
 The optional Studio now imports local M3U/M3U8 channel lists as disabled review candidates, edits VLC-compatible CSV libraries and reports possible duplicate URLs or guide IDs without deleting records. Version 3.4.1 adds private temporary-playlist cleanup, bounded edit payloads, renderer-origin checks and unsaved-work protection. These companion features do not enlarge VLC’s native Lua interface.
 
+## Added in 3.5.0
+
+The native VLC extension now builds country and language selectors from CSV metadata. These exact filters combine with search, group and audience controls and govern the displayed list, queueing and export.
+
 ## Next: verify and remove friction
 
 Validate the installers and in-player interface on Windows and macOS. Check keyboard navigation, screen readers, high DPI, long paths and non-ASCII filenames. Confirm provider-format behaviour with authorised sample streams. Review the 1,000-item display cap and the 2 MiB input limit using measured timings before raising either. Add useful failures rather than optimistic status labels.
 
 ## Playlist organisation
 
-Plan favourites, recently viewed, multiple lists, custom collections, richer country/language views, sorting, bulk operations, tags, colour labels and saved searches. Studio’s duplicate report is implemented; any future merge or deletion must remain an explicit user decision. Audience labels and XXX visibility are implemented in 1.5.0; saved preferences and richer classifications remain possible future work.
+Plan favourites, recently viewed, multiple lists, custom collections, sorting, bulk operations, tags, colour labels and saved searches. Studio’s duplicate report is implemented; any future merge or deletion must remain an explicit user decision. Basic native country/language selectors arrive in 3.5.0, while richer views and saved preferences remain future work.
 
 ## Import and guides
 
