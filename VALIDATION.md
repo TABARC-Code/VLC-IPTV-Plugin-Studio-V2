@@ -1,5 +1,9 @@
 # Validation and remaining limits
 
+## 3.5.0 country and language filters
+
+The native suite now checks exact country/language matches, combination with groups, populated VLC dropdown doubles and visible-list changes. Queueing, export and stale-selection checks continue through the same current-filter function. These tests do not prove that the additional row fits every VLC theme, DPI setting or translated desktop build; real in-player validation remains required.
+
 ## 3.4.1 local release-candidate checks
 
 On Windows, all 20 Studio core tests passed under Node.js, including private temporary-playlist creation and cleanup, IPC origin comparison, 20,000-channel boundaries, field-size limits, CSV/M3U behaviour and duplicate review. Every Studio JavaScript file also passed Node’s syntax check. All 13 Home Assistant bridge and Lovelace tests passed.
