@@ -2,6 +2,13 @@
 
 Actual changes only. Release dates and notes are recorded when the work is published.
 
+## 1.5.2 — 28 October 2026
+
+- Added country and language dropdowns populated from the loaded CSV, so a list can be narrowed without remembering metadata codes or folding them into search text.
+- Applied country and language choices consistently to the visible list, selected-item checks, filtered queueing and M3U export.
+- Kept blank country/language cells available through the all-items choices instead of adding ambiguous `(blank)` categories.
+- Added regression coverage for exact country/language matching, combined filters and native control behaviour. Real VLC desktop layout checks remain outstanding.
+
 ## 1.5.1 — 15 October 2026
 
 - Added an executable Linux launcher alongside the macOS launcher. Both pass installer options through and work from other working directories; the Mac launcher waits for Return only in an interactive terminal.

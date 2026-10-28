@@ -10,13 +10,17 @@ Native VLC dialog, CSV validation, group and text filters, enabled records, sele
 
 Audience dropdown, XXX visibility checkbox, optional audience CSV metadata and legacy group fallbacks. Playback, queue and export respect current filters. Labels are user-assigned; no age verification or parental lock is provided.
 
+## Added in 1.5.2
+
+Country and language dropdowns now use the metadata already present in the CSV. They combine with search, group and audience controls, and the same filter is used for display, queueing and export.
+
 ## Next: verify and remove friction
 
 Validate the installers and in-player interface on Windows and macOS. Check keyboard navigation, screen readers, high DPI, long paths and non-ASCII filenames. Confirm provider-format behaviour with authorised sample streams. Review the 1,000-item display cap and the 2 MiB input limit using measured timings before raising either. Add useful failures rather than optimistic status labels.
 
 ## Playlist organisation
 
-Plan favourites, recently viewed, multiple lists, custom collections, country/language views, sorting, duplicate review, bulk operations, tags, colour labels and saved searches. Preserve source records when merging; deletion or deduplication should remain an explicit user decision. Audience labels and XXX visibility are implemented in 1.5.0; saved preferences and richer classifications remain possible future work.
+Plan favourites, recently viewed, multiple lists, custom collections, sorting, duplicate review, bulk operations, tags, colour labels and saved searches. Preserve source records when merging; deletion or deduplication should remain an explicit user decision. Country/language filtering is implemented in 1.5.2, and audience labels and XXX visibility in 1.5.0; saved preferences and richer classifications remain possible future work.
 
 ## Import and guides
 

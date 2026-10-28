@@ -1,6 +1,6 @@
 # IPTV Channel Player V2
 
-**TABARC-Code · v1.5.1 · a native VLC Lua extension**
+**TABARC-Code · v1.5.2 · a native VLC Lua extension**
 
 This version opens inside VLC. It reads your channel CSV, lets you search or choose a group, and plays a selected stream using VLC's own player. Queue buttons add channels to the existing playlist. Python is not required to install or run this extension.
 
@@ -52,9 +52,9 @@ You can use another CSV instead: copy its full local path into the CSV field. Wi
 
 ## Search, queue and export
 
-Type a search, choose a group, or tick Show disabled, then choose **Apply filter**. Search covers names, groups, countries and languages using simple case folding. Disabled records are marked and cannot be played from the extension.
+Type a search; choose a group, country or language; or tick Show disabled, then choose **Apply filter**. The country and language lists are built from the loaded CSV and omit blank metadata. Search still covers names, groups, countries and languages using simple case folding. Disabled records are marked and cannot be played from the extension.
 
-**Queue selected** adds your selected enabled channels without starting them. **Queue filtered** adds enabled records matching the current search, group and audience settings. These actions append to the current VLC playlist; they do not clear it. Repeated clicks intentionally add another copy.
+**Queue selected** adds your selected enabled channels without starting them. **Queue filtered** adds enabled records matching the current search, group, country, language and audience settings. These actions append to the current VLC playlist; they do not clear it. Repeated clicks intentionally add another copy.
 
 For another IPTV app, enter a local filename ending in .m3u or .m3u8 and choose **Export M3U**. Export uses enabled rows matching the current filters, including matches beyond the 1,000-row display cap. If the output already exists, the extension asks for a second click and keeps the old file under a .backup name. Keep those backups private too if the URLs contain access tokens.
 

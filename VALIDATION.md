@@ -1,5 +1,9 @@
 # Validation and remaining limits
 
+## 1.5.2 country and language filters
+
+The native suite now checks exact country/language matches, combination with groups, populated VLC dropdown doubles, visible-list changes and the existing filter path used by queue/export. These automated checks do not prove that the extra row fits every VLC theme, DPI setting or translated desktop build; that still needs real in-player validation.
+
 ## 1.5.1 macOS and Linux installation
 
 The installer suite covers installation and upgrades in paths containing spaces and Unicode, default user paths, Linux XDG paths, both launchers from another working directory and invalid arguments. Five tests passed locally on Linux. The macOS CI job runs the four applicable tests on a macOS runner; the Linux-specific XDG test is skipped there. Release publication waits for both installer jobs and the Lua regression job.

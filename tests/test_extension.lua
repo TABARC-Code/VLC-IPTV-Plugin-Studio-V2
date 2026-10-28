@@ -10,7 +10,7 @@ local function widget(text)
     function w:get_text() return self.text end
     function w:add_value(text, id) self.values[id] = text end
     function w:get_value() return self.value end
-    function w:clear() self.values, self.selection = {}, {} end
+    function w:clear() self.values, self.selection, self.value = {}, {}, 1 end
     function w:get_selection() return self.selection end
     function w:get_checked() return self.checked end
     return w
@@ -99,6 +99,14 @@ test("plain-text search and group/disabled filters", function()
     assert(#IPTV.filter(rows, "", "Kids", false) == 0)
     assert(#IPTV.filter(rows, "", "Kids", true) == 1)
 end)
+test("country and language filters are exact and composable", function()
+    local rows = assert(IPTV.parse_csv(data ..
+        'three,France News,News,FR,fr,https://example.org/france,,,true\n'))
+    assert(#IPTV.filter(rows, "", nil, false, "all", false, "GB", nil) == 1)
+    assert(#IPTV.filter(rows, "", nil, false, "all", false, nil, "fr") == 1)
+    assert(#IPTV.filter(rows, "", "News", false, "all", false, "FR", "fr") == 1)
+    assert(#IPTV.filter(rows, "", "News", false, "all", false, "GB", "fr") == 0)
+end)
 test("packaged examples parse and keep placeholder streams disabled", function()
     for _, name in ipairs({"blank-template.csv", "starter-categories.csv", "metadata-and-quoting.csv", "audience-categories.csv"}) do
         local file = assert(io.open(root .. "/examples/" .. name, "rb"))
@@ -110,15 +118,29 @@ test("packaged examples parse and keep placeholder streams disabled", function()
 end)
 activate()
 test("first launch shows the usage notice", function()
-    assert(widgets["html:1:10"].text:find("Do not misuse", 1, true))
+    assert(widgets["html:1:11"].text:find("Do not misuse", 1, true))
     show_help()
-    assert(widgets["html:1:10"].removed)
+    assert(widgets["html:1:11"].removed)
 end)
 widgets["input:2:2"].text = csv
 load_csv()
-local list = widgets["list:1:5"]
+local list = widgets["list:1:6"]
 test("load selects enabled rows without autoplay", function()
     assert(list.values[1] and not list.values[2] and #played == 0)
+end)
+test("native country and language controls narrow the visible list", function()
+    write(csv, data .. 'three,France News,News,FR,fr,https://example.org/france,,,true\n')
+    load_csv()
+    local country, language = widgets["dropdown:2:4"], widgets["dropdown:4:4"]
+    local country_id, language_id
+    for id, value in pairs(country.values) do if value == "FR" then country_id = id end end
+    for id, value in pairs(language.values) do if value == "fr" then language_id = id end end
+    assert(country_id and language_id)
+    country.value, language.value = country_id, language_id
+    refresh_channels()
+    assert(list.values[3] and not list.values[1] and not list.values[2])
+    write(csv, data)
+    load_csv()
 end)
 test("selected channel plays within VLC", function()
     list.selection = {[1] = list.values[1]}
@@ -147,7 +169,7 @@ end)
 test("export asks before replacing and keeps the original backup", function()
     local out = tmp .. "/native-output.m3u"
     write(out, "original")
-    widgets["input:2:7"].text = out
+    widgets["input:2:8"].text = out
     export_m3u()
     local f = assert(io.open(out)); assert(f:read("*a") == "original"); f:close()
     export_m3u()
@@ -172,7 +194,7 @@ test("export cannot replace the loaded source through a dot-segment alias", func
     widgets["input:2:2"].text = source
     load_csv()
     for _, alias in ipairs({tmp .. "/./protected-source.m3u", tmp .. "/../" .. tmp:match("([^/]+)$") .. "/protected-source.m3u"}) do
-        widgets["input:2:7"].text = alias
+        widgets["input:2:8"].text = alias
         export_m3u()
         export_m3u()
         local file = assert(io.open(source, "rb"))
@@ -244,18 +266,18 @@ test("native controls hide XXX initially and filter the list on apply", function
     write(csv, audience_data)
     widgets["input:2:2"].text = csv
     load_csv()
-    assert(not widgets["check:4:4"].checked and not list.values[5] and not list.values[7])
+    assert(not widgets["check:4:5"].checked and not list.values[5] and not list.values[7])
     for choice, row in ipairs({1, 2, 3, 4}) do
-        widgets["dropdown:2:4"].value = choice + 1
+        widgets["dropdown:2:5"].value = choice + 1
         refresh_channels()
         local count = 0
         for _ in pairs(list.values) do count = count + 1 end
         assert(count == 1 and list.values[row])
     end
-    widgets["dropdown:2:4"].value = 6
+    widgets["dropdown:2:5"].value = 6
     refresh_channels()
     assert(next(list.values) == nil)
-    widgets["check:4:4"].checked = true
+    widgets["check:4:5"].checked = true
     refresh_channels()
     assert(list.values[5] and list.values[7]) -- Show disabled is still enabled above.
 end)
@@ -264,35 +286,35 @@ test("changing XXX visibility blocks stale selected playback and queueing", func
     local play_count, queue_count = #played, #queued
     play_selected()
     assert(#played == play_count + 1)
-    widgets["check:4:4"].checked = false -- No Apply filter yet.
+    widgets["check:4:5"].checked = false -- No Apply filter yet.
     play_selected()
     queue_selected()
     assert(#played == play_count + 1 and #queued == queue_count)
 end)
 test("bulk queue and export use current filters even before Apply filter", function()
-    widgets["dropdown:2:4"].value = 1
+    widgets["dropdown:2:5"].value = 1
     local queue_count = #queued
     queue_enabled()
     assert(#queued == queue_count + 1 and #queued[#queued] == 5)
     local out = tmp .. "/audience-export.m3u"
-    widgets["input:2:7"].text = out
+    widgets["input:2:8"].text = out
     export_m3u()
     local f = assert(io.open(out)); local text = f:read("*a"); f:close()
     assert(not text:find("https://example.org/5", 1, true))
-    widgets["check:4:4"].checked = true
+    widgets["check:4:5"].checked = true
     widgets["input:2:3"].text = "Channel 5"
     queue_enabled()
     assert(#queued[#queued] == 1 and queued[#queued][1].path == "https://example.org/5")
-    widgets["input:2:7"].text = tmp .. "/xxx-export.m3u"
+    widgets["input:2:8"].text = tmp .. "/xxx-export.m3u"
     export_m3u()
-    f = assert(io.open(widgets["input:2:7"].text)); text = f:read("*a"); f:close()
+    f = assert(io.open(widgets["input:2:8"].text)); text = f:read("*a"); f:close()
     assert(text:find("https://example.org/5", 1, true) and not text:find("https://example.org/1", 1, true))
     widgets["input:2:3"].text = ""
 end)
 test("invalid audience reload preserves the previous valid database", function()
     write(csv, audience_data:gsub(",xxx", ",typo"))
     load_csv()
-    widgets["dropdown:2:4"].value = 6
+    widgets["dropdown:2:5"].value = 6
     refresh_channels()
     assert(list.values[5])
     write(csv, audience_data)
@@ -303,14 +325,14 @@ test("bulk operations include matches beyond the 1,000-row display cap", functio
         many = many .. i .. ",Many " .. i .. ",Films,GB,en,https://example.org/many/" .. i .. ",,,true,12+\n"
     end
     write(csv, many)
-    widgets["dropdown:2:4"].value = 3
+    widgets["dropdown:2:5"].value = 3
     load_csv()
     assert(list.values[1000] and not list.values[1001])
     queue_enabled()
     assert(#queued[#queued] == 1002)
-    widgets["input:2:7"].text = tmp .. "/many-export.m3u"
+    widgets["input:2:8"].text = tmp .. "/many-export.m3u"
     export_m3u()
-    local f = assert(io.open(widgets["input:2:7"].text)); local text = f:read("*a"); f:close()
+    local f = assert(io.open(widgets["input:2:8"].text)); local text = f:read("*a"); f:close()
     local _, count = text:gsub("#EXTINF", "")
     assert(count == 1002)
     write(csv, audience_data)
@@ -318,18 +340,18 @@ end)
 test("reopening resets XXX visibility and audience selection", function()
     deactivate()
     activate()
-    list = widgets["list:1:5"]
-    assert(widgets["dropdown:2:4"].value == 1 and not widgets["check:4:4"].checked)
+    list = widgets["list:1:6"]
+    assert(widgets["dropdown:2:5"].value == 1 and not widgets["check:4:5"].checked)
     assert(list.values[1] and not list.values[5])
 end)
 
 test("help notice and clean deactivation", function()
     show_help()
-    assert(widgets["html:1:10"].text:find("Do not misuse", 1, true))
+    assert(widgets["html:1:11"].text:find("Do not misuse", 1, true))
     show_help()
-    assert(widgets["html:1:10"].removed)
+    assert(widgets["html:1:11"].removed)
     show_csv_guide()
-    assert(widgets["html:1:10"].text:find("Never invent working", 1, true))
+    assert(widgets["html:1:11"].text:find("Never invent working", 1, true))
     close()
     assert(deleted)
 end)

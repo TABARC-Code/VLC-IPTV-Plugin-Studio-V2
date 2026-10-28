@@ -8,7 +8,7 @@ You do need a stream you are authorised to watch. The package includes disabled 
 
 1. Install desktop VLC 3 from https://www.videolan.org/vlc/.
 2. Open this project's [Releases page](https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/releases/latest).
-3. Under **Assets**, download the file named **iptv-channel-player-native-v1.5.1.zip**.
+3. Under **Assets**, download the file named **iptv-channel-player-native-v1.5.2.zip**.
 4. Extract the whole ZIP into Documents or another folder you can find again. On Windows, right-click it and choose **Extract All**. On macOS, double-click it. On Linux, use your archive manager's Extract command.
 5. Open the extracted folder containing **START HERE.txt** and the installer files. Keep these files together.
 
