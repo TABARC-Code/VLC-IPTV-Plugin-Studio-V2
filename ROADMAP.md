@@ -10,17 +10,21 @@ Native VLC dialog, CSV validation, group and text filters, enabled records, sele
 
 Audience dropdown, XXX visibility checkbox, optional audience CSV metadata and legacy group fallbacks. Playback, queue and export respect current filters. Labels are user-assigned; no age verification or parental lock is provided.
 
+## Added in 3.1.0 and 3.4.1
+
+The optional Studio now imports local M3U/M3U8 channel lists as disabled review candidates, edits VLC-compatible CSV libraries and reports possible duplicate URLs or guide IDs without deleting records. Version 3.4.1 adds private temporary-playlist cleanup, bounded edit payloads, renderer-origin checks and unsaved-work protection. These companion features do not enlarge VLC’s native Lua interface.
+
 ## Next: verify and remove friction
 
 Validate the installers and in-player interface on Windows and macOS. Check keyboard navigation, screen readers, high DPI, long paths and non-ASCII filenames. Confirm provider-format behaviour with authorised sample streams. Review the 1,000-item display cap and the 2 MiB input limit using measured timings before raising either. Add useful failures rather than optimistic status labels.
 
 ## Playlist organisation
 
-Plan favourites, recently viewed, multiple lists, custom collections, country/language views, sorting, duplicate review, bulk operations, tags, colour labels and saved searches. Preserve source records when merging; deletion or deduplication should remain an explicit user decision. Audience labels and XXX visibility are implemented in 1.5.0; saved preferences and richer classifications remain possible future work.
+Plan favourites, recently viewed, multiple lists, custom collections, richer country/language views, sorting, bulk operations, tags, colour labels and saved searches. Studio’s duplicate report is implemented; any future merge or deletion must remain an explicit user decision. Audience labels and XXX visibility are implemented in 1.5.0; saved preferences and richer classifications remain possible future work.
 
 ## Import and guides
 
-Plan M3U/M3U8/TXT import, a file chooser where the host supports it, drag and drop, watched folders and controlled automatic reload. Add XMLTV EPG ingestion, mapping and guide views, with clear cache and expiry rules. These are not present in the native 1.4.7 extension.
+Studio has local M3U/M3U8 import and operating-system file choosers. Plan TXT import, drag and drop, watched folders and controlled automatic reload. Add XMLTV EPG ingestion, mapping and guide views, with clear cache and expiry rules. These are not present in the native VLC extension.
 
 ## A larger studio
 

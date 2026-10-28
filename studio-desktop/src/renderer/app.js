@@ -21,6 +21,16 @@ function say(message, error = false) {
   status.classList.toggle('error', error);
 }
 
+function canDiscardChanges(action) {
+  return !state.dirty || confirm(`Discard unsaved changes before ${action}?`);
+}
+
+function audienceBadge(channel) {
+  if (channel.audience === 'xxx') return 'XXX';
+  if (channel.audience === '18+') return '18+';
+  return channel.adult ? '18+' : '';
+}
+
 function icon(name) {
   return `<i data-lucide="${name}" aria-hidden="true"></i>`;
 }
@@ -62,15 +72,18 @@ function render() {
   $('#category-options').innerHTML = unique('category').map(value => `<option value="${h(value)}"></option>`).join('');
   $('#library-name').textContent = state.library ? state.library.toUpperCase() : 'CHANNEL LIBRARY';
   $('#summary').textContent = `${channels.length} visible · ${state.channels.length} total${state.dirty ? ' · unsaved changes' : ''}`;
-  $('#channel-rows').innerHTML = channels.length ? channels.map(channel => `
+  $('#channel-rows').innerHTML = channels.length ? channels.map(channel => {
+    const adultLabel = audienceBadge(channel);
+    return `
     <tr>
       <td><div class="channel-name">${channel.logo_url ? `<img class="channel-logo" src="${h(channel.logo_url)}" alt="" referrerpolicy="no-referrer">` : `<span class="channel-fallback">${icon('radio')}</span>`}<span>${h(channel.name)}</span></div></td>
       <td>${h(channel.category || 'Unsorted')}</td>
       <td>${h(channel.country || '—')}</td>
       <td>${h(channel.language || '—')}</td>
-      <td><span class="pill ${channel.enabled ? 'live' : 'off'}">${channel.enabled ? 'Enabled' : 'Disabled'}</span>${channel.adult ? '<span class="pill adult">18+</span>' : ''}</td>
+      <td><span class="pill ${channel.enabled ? 'live' : 'off'}">${channel.enabled ? 'Enabled' : 'Disabled'}</span>${adultLabel ? `<span class="pill adult">${adultLabel}</span>` : ''}</td>
       <td><div class="row-actions"><button class="icon-button edit" data-id="${h(channel.id)}" aria-label="Edit ${h(channel.name)}">${icon('pencil')}</button><button class="icon-button remove" data-id="${h(channel.id)}" aria-label="Delete ${h(channel.name)}">${icon('trash-2')}</button></div></td>
-    </tr>`).join('') : '<tr><td colspan="6" class="empty">No channels match this view.</td></tr>';
+    </tr>`;
+  }).join('') : '<tr><td colspan="6" class="empty">No channels match this view.</td></tr>';
   refreshIcons();
 }
 
@@ -168,14 +181,27 @@ $('#channel-rows').addEventListener('click', event => {
 });
 $('#refresh').addEventListener('click', () => guarded(async () => { await refreshLibraries(); say('Library list refreshed.'); }));
 $('#folder').addEventListener('click', () => guarded(() => window.studio.openLibraryFolder()));
-$('#libraries').addEventListener('change', event => guarded(() => loadLibrary(event.target.value)));
+$('#libraries').addEventListener('change', event => guarded(async () => {
+  if (event.target.value === state.library) return;
+  if (!event.target.value) {
+    event.target.value = state.library;
+    return;
+  }
+  if (!canDiscardChanges('opening another library')) {
+    event.target.value = state.library;
+    return;
+  }
+  await loadLibrary(event.target.value);
+}));
 $('#import').addEventListener('click', () => guarded(async () => {
+  if (!canDiscardChanges('importing a CSV')) return;
   const result = await window.studio.chooseCsv();
   if (!result) return;
   state.library = result.name; state.channels = result.channels; state.dirty = false;
   await refreshLibraries(result.name); render(); say(`Imported ${result.channels.length} channels into ${result.name}.`);
 }));
 $('#import-m3u').addEventListener('click', () => guarded(async () => {
+  if (!canDiscardChanges('importing an M3U playlist')) return;
   const result = await window.studio.chooseM3u();
   if (!result) return;
   state.library = result.name;
@@ -234,6 +260,11 @@ $('#play').addEventListener('click', () => guarded(async () => {
   if (result.launched) say('Playlist handed to VLC. Playback remains under VLC’s control.');
 }));
 $('#accept').addEventListener('click', () => { localStorage.setItem('usage-notice-v1', 'accepted'); $('#disclaimer').close(); });
+window.addEventListener('beforeunload', event => {
+  if (!state.dirty) return;
+  event.preventDefault();
+  event.returnValue = '';
+});
 
 guarded(async () => {
   const info = await window.studio.appInfo();

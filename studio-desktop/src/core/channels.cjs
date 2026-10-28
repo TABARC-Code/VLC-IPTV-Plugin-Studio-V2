@@ -13,6 +13,8 @@ const EXPORT_FIELDS = Object.freeze([
 ]);
 const AUDIENCES = new Set(['cartoons', '12+', '16+', '18+', 'xxx', 'unrated']);
 const MAX_CSV_BYTES = 20 * 1024 * 1024;
+const MAX_CHANNELS = 20000;
+const MAX_FIELD_CHARS = 10000;
 const TRUTHY = new Set(['true', '1', 'yes', 'y']);
 const FALSY = new Set(['false', '0', 'no', 'n', '']);
 
@@ -92,7 +94,13 @@ function stableId(channel, rowNumber) {
 }
 
 function validateChannel(raw, rowNumber, seen = new Set()) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    throw new Error(`Row ${rowNumber}: expected a channel record.`);
+  }
   const channel = Object.fromEntries(FIELDS.map(field => [field, clean(raw[field])]));
+  for (const [field, value] of Object.entries(channel)) {
+    if (value.length > MAX_FIELD_CHARS) throw new Error(`Row ${rowNumber}: ${field} is too long.`);
+  }
   channel.enabled = toBoolean(raw.enabled ?? 'true', 'enabled', rowNumber);
   channel.adult = toBoolean(raw.adult ?? 'false', 'adult', rowNumber);
   channel.audience = clean(raw.audience).toLowerCase();
@@ -132,6 +140,7 @@ function readChannels(text) {
   for (const required of ['name', 'stream_url']) {
     if (!headers.includes(required)) throw new Error(`CSV needs a ${required} column.`);
   }
+  if (records.length > MAX_CHANNELS) throw new Error(`CSV exceeds the ${MAX_CHANNELS.toLocaleString('en-GB')}-channel limit.`);
   const seen = new Set();
   return records.map((values, offset) => {
     if (values.length !== headers.length) {
@@ -148,6 +157,7 @@ function quote(value) {
 }
 
 function writeChannels(channels) {
+  validateChannelCollection(channels);
   const seen = new Set();
   const checked = channels.map((channel, index) => validateChannel(channel, index + 2, seen));
   const lines = [EXPORT_FIELDS.join(',')];
@@ -160,6 +170,7 @@ function writeChannels(channels) {
 }
 
 function m3u(channels) {
+  validateChannelCollection(channels);
   const lines = ['#EXTM3U'];
   const seen = new Set();
   for (let index = 0; index < channels.length; index += 1) {
@@ -172,6 +183,11 @@ function m3u(channels) {
   return `${lines.join('\n')}\n`;
 }
 
+function validateChannelCollection(channels) {
+  if (!Array.isArray(channels)) throw new Error('Expected a channel list.');
+  if (channels.length > MAX_CHANNELS) throw new Error(`Channel list exceeds the ${MAX_CHANNELS.toLocaleString('en-GB')}-channel limit.`);
+}
+
 function facets(channels) {
   const count = key => Object.entries(channels.reduce((all, channel) => {
     const value = channel[key] || 'Unsorted';
@@ -181,5 +197,5 @@ function facets(channels) {
   return { categories: count('category'), countries: count('country') };
 }
 
-module.exports = { AUDIENCES, EXPORT_FIELDS, FIELDS, MAX_CSV_BYTES, audienceFromGroup, facets, m3u, parseCsv, readChannels, validateChannel, writeChannels };
+module.exports = { AUDIENCES, EXPORT_FIELDS, FIELDS, MAX_CHANNELS, MAX_CSV_BYTES, MAX_FIELD_CHARS, audienceFromGroup, facets, m3u, parseCsv, readChannels, validateChannel, validateChannelCollection, writeChannels };
 

@@ -2,7 +2,7 @@
 
 ## GitHub description
 
-A native VLC 3 Lua extension for CSV IPTV lists: search, group filters, selected-channel playback, queueing and M3U export, with beginner guides and an optional AI formatting prompt.
+A native VLC 3 Lua extension for CSV IPTV lists: search, group filters, selected-channel playback, queueing and M3U export, with beginner guides and worked examples.
 
 ## What this release is
 

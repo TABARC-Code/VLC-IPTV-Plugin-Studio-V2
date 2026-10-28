@@ -1,5 +1,13 @@
 # Validation and remaining limits
 
+## 3.4.1 local release-candidate checks
+
+On Windows, all 20 Studio core tests passed under Node.js, including private temporary-playlist creation and cleanup, IPC origin comparison, 20,000-channel boundaries, field-size limits, CSV/M3U behaviour and duplicate review. Every Studio JavaScript file also passed Node’s syntax check. All 13 Home Assistant bridge and Lovelace tests passed.
+
+The five Python tests were discovered but correctly skipped because they exercise the POSIX installers, not Windows. No Lua 5.1 runtime was available locally, so the updated native-extension test was not executed in this environment. The local package-manager wrapper also failed to complete a dependency vulnerability audit, so no local audit result is claimed. The repository release workflow remains responsible for Lua 5.1 syntax/regression checks and the Linux/macOS installer matrix before publication.
+
+Electron rendering, unsaved-work prompts, real VLC process launch, temporary-file cleanup after a genuine VLC exit and stream playback have not been exercised on end-user hardware for 3.4.1. Automated tests establish data and boundary behaviour; they do not establish picture, sound or desktop integration.
+
 ## 1.5.1 macOS and Linux installation
 
 The installer suite covers installation and upgrades in paths containing spaces and Unicode, default user paths, Linux XDG paths, both launchers from another working directory and invalid arguments. Five tests passed locally on Linux. The macOS CI job runs the four applicable tests on a macOS runner; the Linux-specific XDG test is skipped there. Release publication waits for both installer jobs and the Lua regression job.
@@ -28,4 +36,4 @@ A local HTTP/HLS fixture could not be verified because the development environme
 
 CI reruns Lua and installer checks before creating a versioned source ZIP. These checks validate extension logic and packaging. They do not certify the host’s codecs, screen-reader behaviour, high-DPI layout, provider authentication, regional availability or licensing rights.
 
-The larger studio features in ROADMAP.md are still planned. This source release is suitable for review and desktop testing; it should not be presented as a completed implementation of the entire development brief.
+Larger Studio features in ROADMAP.md remain planned. This source release is suitable for review and desktop testing; it should not be presented as a completed implementation of the entire development brief.

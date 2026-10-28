@@ -1,12 +1,12 @@
 # IPTV Channel Player V2
 
-**TABARC-Code · v3.1.0 · a native VLC Lua extension**
+**TABARC-Code · v3.4.1 · a native VLC Lua extension**
 
 This version opens inside VLC. It reads your channel CSV, lets you search or choose a group, and plays a selected stream using VLC's own player. Queue buttons add channels to the existing playlist. Python is not required to install or run this extension.
 
 I have kept the channel database separate from the code. Editing a television channel should take one spreadsheet row, not a small archaeological expedition through a script.
 
-Version 3.1.0 also includes an optional desktop Studio with VLC-compatible channel CSV files and a separate Home Assistant camera bridge. The native VLC extension still runs independently.
+Version 3.4.1 also includes an optional desktop Studio with VLC-compatible channel CSV files and a separate Home Assistant camera bridge. The Studio now removes its private temporary VLC playlists, rejects oversized edit payloads, protects unsaved work and accepts IPC calls only from its own renderer. The native VLC extension still runs independently.
 
 ## Guides
 
