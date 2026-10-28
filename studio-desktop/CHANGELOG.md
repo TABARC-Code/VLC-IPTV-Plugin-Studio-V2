@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.4.1 — 28 October 2026
+
+- Private temporary VLC playlists are deleted after VLC exits, when Studio closes, and during the next clean start after an interrupted run.
+- VLC process-start failures now return a visible error instead of leaving an unhandled child-process event.
+- IPC handlers reject calls outside the exact local Studio renderer.
+- Import, save, export and play operations enforce the same 20,000-channel ceiling and bounded field lengths.
+- Library changes, imports and window closure warn when edits are unsaved.
+- Audience badges distinguish 18+ from XXX, while both remain hidden by default.
+- Home Assistant bridge and Lovelace tests now form part of the repository release gate.
+
+Graphical Electron and real VLC playback remain to be verified on end-user hardware.
+
 ## 3.1.0 — 18 October 2026
 
 - Saved channel CSV format is compatible with the native VLC extension, including explicit 18+ and XXX audience metadata.

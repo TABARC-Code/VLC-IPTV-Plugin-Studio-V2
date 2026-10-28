@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { facets, m3u, parseCsv, readChannels, writeChannels } = require('../src/core/channels.cjs');
+const { MAX_CHANNELS, MAX_FIELD_CHARS, facets, m3u, parseCsv, readChannels, writeChannels } = require('../src/core/channels.cjs');
 
 const HEADER = 'id,name,group,country,language,stream_url,logo_url,tvg_id,enabled,audience,adult,notes';
 
@@ -78,4 +78,16 @@ test('legacy adult labels stay hidden and translate to native categories', () =>
 test('aliases cannot silently override a column and multiline notes cannot break VLC input', () => {
   assert.throws(() => readChannels('name,group,category,stream_url\\nA,News,Other,https://example.test/live\\n'.replaceAll('\\n','\n')), /duplicate/i);
   assert.throws(() => writeChannels([channel({notes:'Line one\\nLine two'.replaceAll('\\n','\n')})]), /one line/);
+});
+
+test('all write and playlist boundaries enforce collection and field limits', () => {
+  assert.throws(() => writeChannels({}), /channel list/i);
+  assert.throws(() => m3u(new Array(MAX_CHANNELS + 1)), /20,000-channel limit/i);
+  assert.throws(() => writeChannels([channel({ name: 'x'.repeat(MAX_FIELD_CHARS + 1) })]), /name is too long/i);
+});
+
+test('CSV import rejects more than 20,000 channel rows', () => {
+  const rows = ['name,stream_url'];
+  for (let index = 0; index <= MAX_CHANNELS; index += 1) rows.push(`Channel ${index},https://example.test/${index}`);
+  assert.throws(() => readChannels(rows.join('\n')), /20,000-channel limit/i);
 });

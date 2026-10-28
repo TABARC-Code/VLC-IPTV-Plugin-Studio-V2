@@ -7,13 +7,45 @@ const fsSync = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 const crypto = require('node:crypto');
+const { pathToFileURL } = require('node:url');
 const { MAX_CSV_BYTES, m3u, readChannels, writeChannels } = require('./core/channels.cjs');
 const { parseM3u } = require('./core/m3u.cjs');
 const { duplicateCandidates } = require('./core/duplicates.cjs');
+const { cleanupOwnedPlaylists, createPrivatePlaylist, isTrustedRendererUrl, removePlaylist } = require('./core/runtime.cjs');
 
-const VERSION = '3.1.0';
+const VERSION = '3.4.1';
+const rendererPath = path.join(__dirname, 'renderer', 'index.html');
+const rendererUrl = pathToFileURL(rendererPath).href;
+const activePlaylists = new Set();
 let window;
 let customVlcPath = null;
+const hasSingleInstanceLock = app.requestSingleInstanceLock();
+
+if (!hasSingleInstanceLock) app.quit();
+app.on('second-instance', () => {
+  if (!window) return;
+  if (window.isMinimized()) window.restore();
+  window.show();
+  window.focus();
+});
+
+function handleIpc(channel, handler) {
+  ipcMain.handle(channel, async (event, ...args) => {
+    if (!isTrustedRendererUrl(event.senderFrame?.url, rendererUrl)) {
+      throw new Error('Request rejected because it did not come from the Studio window.');
+    }
+    return handler(event, ...args);
+  });
+}
+
+async function discardPlaylist(playlist) {
+  activePlaylists.delete(playlist);
+  try {
+    await removePlaylist(playlist);
+  } catch (error) {
+    if (error.code !== 'ENOENT') activePlaylists.add(playlist);
+  }
+}
 
 if (process.env.STUDIO_CAPTURE_PATH && !app.isPackaged) {
   app.setPath('userData', path.join(path.dirname(process.env.STUDIO_CAPTURE_PATH), 'capture-profile'));
@@ -76,7 +108,7 @@ async function createWindow() {
       devTools: !app.isPackaged
     }
   });
-  await window.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+  await window.loadFile(rendererPath);
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   window.webContents.on('will-navigate', event => event.preventDefault());
 
@@ -95,15 +127,15 @@ async function createWindow() {
   }
 }
 
-ipcMain.handle('app:info', async () => ({ version: VERSION, platform: process.platform, vlcFound: Boolean(findVlc()) }));
+handleIpc('app:info', async () => ({ version: VERSION, platform: process.platform, vlcFound: Boolean(findVlc()) }));
 
-ipcMain.handle('library:list', async () => {
+handleIpc('library:list', async () => {
   await ensureLibrary();
   const entries = await fs.readdir(libraryDir(), { withFileTypes: true });
   return entries.filter(entry => entry.isFile() && entry.name.toLowerCase().endsWith('.csv')).map(entry => entry.name).sort();
 });
 
-ipcMain.handle('library:choose-csv', async () => {
+handleIpc('library:choose-csv', async () => {
   const result = await dialog.showOpenDialog(window, {
     title: 'Import a channel CSV', properties: ['openFile'], filters: [{ name: 'Channel CSV', extensions: ['csv'] }]
   });
@@ -122,7 +154,7 @@ ipcMain.handle('library:choose-csv', async () => {
   return { name, channels };
 });
 
-ipcMain.handle('library:choose-m3u', async () => {
+handleIpc('library:choose-m3u', async () => {
   const result = await dialog.showOpenDialog(window, {
     title: 'Import a local channel playlist', properties: ['openFile'],
     filters: [{ name: 'M3U playlist', extensions: ['m3u', 'm3u8'] }]
@@ -141,47 +173,55 @@ ipcMain.handle('library:choose-m3u', async () => {
   return { name, channels };
 });
 
-ipcMain.handle('library:load', async (_event, requestedName) => {
+handleIpc('library:load', async (_event, requestedName) => {
   const name = safeLibraryName(requestedName);
   const text = await fs.readFile(path.join(libraryDir(), name), 'utf8');
   return { name, channels: readChannels(text) };
 });
 
-ipcMain.handle('library:save', async (_event, payload) => {
+handleIpc('library:save', async (_event, payload) => {
   const name = safeLibraryName(payload?.name);
   const output = writeChannels(payload?.channels || []);
   await atomicWrite(path.join(libraryDir(), name), output);
   return { name };
 });
 
-ipcMain.handle('library:duplicates', async (_event, channels) => duplicateCandidates(channels));
+handleIpc('library:duplicates', async (_event, channels) => duplicateCandidates(channels));
 
-ipcMain.handle('library:open-folder', async () => {
+handleIpc('library:open-folder', async () => {
   await ensureLibrary();
   const error = await shell.openPath(libraryDir());
   if (error) throw new Error(error);
   return true;
 });
 
-ipcMain.handle('vlc:choose', async () => {
+handleIpc('vlc:choose', async () => {
   const result = await dialog.showOpenDialog(window, { title: 'Locate the VLC executable', properties: ['openFile'] });
   if (result.canceled) return null;
   customVlcPath = result.filePaths[0];
   return customVlcPath;
 });
 
-ipcMain.handle('vlc:launch', async (_event, payload) => {
+handleIpc('vlc:launch', async (_event, payload) => {
   const executable = findVlc();
   if (!executable) return { needsVlc: true };
-  const playlist = path.join(os.tmpdir(), `tabarc-iptv-${crypto.randomUUID()}.m3u`);
-  await atomicWrite(playlist, m3u(payload?.channels || []));
+  const playlist = await createPrivatePlaylist(os.tmpdir(), m3u(payload?.channels || []));
+  activePlaylists.add(playlist);
   // Arguments remain arguments. A shell would only add excitement of the bad kind.
   const child = spawn(executable, ['--playlist-enqueue', '--', playlist], { detached: true, shell: false, stdio: 'ignore' });
+  child.once('exit', () => { void discardPlaylist(playlist); });
+  await new Promise((resolve, reject) => {
+    child.once('spawn', resolve);
+    child.once('error', error => {
+      void discardPlaylist(playlist);
+      reject(new Error(`VLC could not be started: ${error.message}`));
+    });
+  });
   child.unref();
   return { launched: true };
 });
 
-ipcMain.handle('playlist:export', async (_event, payload) => {
+handleIpc('playlist:export', async (_event, payload) => {
   const result = await dialog.showSaveDialog(window, {
     title: 'Export playlist for VLC', defaultPath: 'tabarc-playlist.m3u', filters: [{ name: 'M3U playlist', extensions: ['m3u'] }]
   });
@@ -191,10 +231,22 @@ ipcMain.handle('playlist:export', async (_event, payload) => {
 });
 
 app.whenReady().then(async () => {
+  if (!hasSingleInstanceLock) return;
+  await cleanupOwnedPlaylists(os.tmpdir());
   await ensureLibrary();
   await createWindow();
   app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
 });
 
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
+app.on('before-quit', () => {
+  for (const playlist of activePlaylists) {
+    try {
+      fsSync.rmSync(playlist, { force: true });
+    } catch (error) {
+      if (error.code !== 'ENOENT') continue;
+    }
+  }
+  activePlaylists.clear();
+});
 

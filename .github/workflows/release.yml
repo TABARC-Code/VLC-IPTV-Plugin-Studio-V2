@@ -60,6 +60,9 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm test
       - run: npm run check
+      - name: Home Assistant integration tests
+        working-directory: integrations/home-assistant
+        run: npm test
   release:
     needs: [verify, installers, studio]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

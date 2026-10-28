@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.4.1 — 28 October 2026
+
+- High: Studio VLC launches now use private, application-owned temporary playlists. Files are removed when VLC exits, when Studio closes, and on the next clean start after an interrupted session; launch failures are reported instead of becoming uncaught process errors.
+- Medium: Every Studio IPC call must originate from the exact local renderer URL. Navigation and new-window blocking remain in place as a second boundary.
+- Medium: CSV import, saving, M3U export and VLC launch share a 20,000-channel ceiling, with a per-field limit to stop oversized renderer payloads bypassing file-import limits.
+- Medium: Studio warns before library changes, imports or window closure discard unsaved edits. Adult badges now distinguish 18+ from XXX.
+- Native extension stream URLs now use the same HTTP, HTTPS, RTSP, RTMP and UDP allowlist as Studio.
+- The release gate now exercises the optional Home Assistant bridge and Lovelace tests as well as the native extension, installers and Studio.
+
+Both applications identify as 3.4.1. Automated checks do not establish successful playback, desktop rendering or installer behaviour on end-user hardware; see VALIDATION.md.
+
 ## 3.1.0 — 18 October 2026
 
 Four separately recorded development changes:
