@@ -6,6 +6,7 @@ This is a live list, not invented archaeology.
 - [x] Explicit 18+ visibility control.
 - [x] Managed CSV import folder.
 - [x] Atomic saving and constrained VLC launch.
+- [x] Save-time revision checks and a five-copy library recovery history.
 - [ ] Drag-and-drop category reassignment.
 - [ ] EPG/XMLTV mapping with local caching and clear expiry.
 - [x] Non-destructive duplicate review by exact stream URL and guide ID.

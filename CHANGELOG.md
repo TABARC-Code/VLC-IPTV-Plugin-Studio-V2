@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.5.2 — 9 November 2026
+
+- I added up to five private recovery copies per Studio library and a Recover control for restoring an earlier saved version.
+- I added revision checks before saving, so edits made outside Studio are no longer silently overwritten. Save as can preserve local edits under a new filename.
+- I changed CSV and M3U imports to create distinct library files exclusively, avoiding the old filename-check race.
+- I aligned both version identifiers and updated the library-recovery guidance.
+
+
 ## 3.5.1 — 9 November 2026
 
 - Generated Studio channel IDs now follow the channel name and stream address, so rearranging distinct CSV records leaves their identities intact. Identical anonymous records receive separate suffixes.

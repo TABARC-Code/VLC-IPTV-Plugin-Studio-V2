@@ -14,7 +14,7 @@ const { importLibrary, listBackups, loadBackup, readLibrary, saveLibrary } = req
 const { duplicateCandidates } = require('./core/duplicates.cjs');
 const { cleanupOwnedPlaylists, createPrivatePlaylist, isTrustedRendererUrl, removePlaylist } = require('./core/runtime.cjs');
 
-const VERSION = '3.5.1';
+const VERSION = '3.5.2';
 const rendererPath = path.join(__dirname, 'renderer', 'index.html');
 const rendererUrl = pathToFileURL(rendererPath).href;
 const activePlaylists = new Set();
