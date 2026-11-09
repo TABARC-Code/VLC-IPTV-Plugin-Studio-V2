@@ -1,4 +1,4 @@
--- IPTV Channel Player V2 | TABARC-Code | v3.5.0
+-- IPTV Channel Player V2 | TABARC-Code | v3.5.1
 -- VLC loads this file itself. No Python process, helper server or provider login is needed.
 -- Keep the CSV outside the script: a channel change should not require a code edit.
 

@@ -2,7 +2,7 @@
 
 **A local-first channel organiser for people who want VLC to play the video and a calmer tool to manage the list.**
 
-Version **3.4.1** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
+Version **3.5.1** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
 
 No channels, subscriptions or access credentials are supplied. This is plumbing, not a pirate treasure map.
 
@@ -24,6 +24,7 @@ No channels, subscriptions or access credentials are supplied. This is plumbing,
 - Warn before a library change or window close discards unsaved edits.
 - Reject oversized channel collections and requests not sent by the Studio renderer.
 - Read and write the original VLC-compatible `group` CSV format while preserving explicit audience labels.
+- Keep generated IDs stable when distinct records move, and retain adult restrictions when older metadata disagrees with newer labels.
 
 ## Why it is a companion app
 
