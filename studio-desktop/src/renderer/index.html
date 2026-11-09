@@ -15,7 +15,7 @@
         <img src="../../assets/icon.png" alt="" width="42" height="42">
         <div>
           <p class="eyebrow">TABARC-CODE</p>
-          <h1>VLC IPTV Studio <span id="version">v3.5.1</span></h1>
+          <h1>VLC IPTV Studio <span id="version">v3.5.2</span></h1>
         </div>
       </div>
       <label class="search-box">
@@ -70,6 +70,8 @@
         </div>
         <div class="content-actions">
           <button class="button quiet" id="duplicates"><i data-lucide="copy-check"></i>Review duplicates</button>
+          <button class="button quiet" id="backups"><i data-lucide="history"></i>Recover</button>
+          <button class="button quiet" id="save-as"><i data-lucide="copy"></i>Save as</button>
           <button class="button quiet" id="save"><i data-lucide="save"></i>Save</button>
           <button class="button primary" id="add"><i data-lucide="plus"></i>Add channel</button>
         </div>
@@ -93,6 +95,18 @@
     <p>The app supplies no feeds, bypasses no access controls and doesn’t promise that a URL will play. Treat playlists containing tokens or credentials as private.</p>
     <p class="fine-print">Independent software by TABARC-Code. Not affiliated with or endorsed by VideoLAN, any broadcaster or any service provider.</p>
     <button class="button primary wide" id="accept">I understand — open the studio</button>
+  </dialog>
+
+  <dialog id="backup-dialog">
+    <form id="backup-form">
+      <h2>Recover a library</h2>
+      <p>Choose an earlier saved version. The current library is backed up before it is replaced.</p>
+      <label>Saved version<select id="backup-options" required></select></label>
+      <div class="form-actions">
+        <button class="button quiet" type="button" id="backup-cancel">Cancel</button>
+        <button class="button primary" type="submit">Restore selected</button>
+      </div>
+    </form>
   </dialog>
 
   <dialog id="duplicate-dialog">

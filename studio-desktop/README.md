@@ -2,7 +2,7 @@
 
 **A local-first channel organiser for people who want VLC to play the video and a calmer tool to manage the list.**
 
-Version **3.5.1** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
+Version **3.5.2** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
 
 No channels, subscriptions or access credentials are supplied. This is plumbing, not a pirate treasure map.
 
@@ -16,7 +16,9 @@ No channels, subscriptions or access credentials are supplied. This is plumbing,
 - Search instantly without changing the underlying file.
 - Add, edit, enable, disable and label individual channels as 18+.
 - Hide 18+ rows by default; reveal them with an explicit switch.
-- Save CSV changes atomically, so an interrupted write does not casually eat the last good file.
+- Save CSV edits with a revision check, retaining up to five earlier copies of each changed library.
+- Recover a previous library version from inside Studio, or use Save as to keep unsaved work separate when the file has changed elsewhere.
+- Import new CSV/M3U files without overwriting existing libraries that happen to share a filename.
 - Export the currently visible, enabled channels as M3U.
 - Review potential duplicate streams and guide IDs without automatically merging or deleting entries.
 - Launch that same view in VLC without building a shell command.
@@ -50,6 +52,8 @@ The renderer has no Node access. File selection, validated reads, atomic writes 
 ## Start here if that sounded like fog
 
 Open [IDIOTS-GUIDE.md](IDIOTS-GUIDE.md). The filename is deliberately blunt; the guide itself is not. It walks through installation and the CSV format without assuming that you keep a terminal under your pillow.
+
+For backup and recovery instructions, see [LIBRARY-RECOVERY.md](docs/LIBRARY-RECOVERY.md). Keep that folder private: backed-up stream URLs may contain provider credentials.
 
 For exact columns and examples, see [CSV-FORMAT.md](docs/CSV-FORMAT.md). The product and interface rationale lives in [DESIGN.md](docs/DESIGN.md).
 

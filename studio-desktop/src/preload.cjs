@@ -9,6 +9,8 @@ contextBridge.exposeInMainWorld('studio', Object.freeze({
   listLibraries: () => ipcRenderer.invoke('library:list'),
   loadLibrary: name => ipcRenderer.invoke('library:load', name),
   saveLibrary: payload => ipcRenderer.invoke('library:save', payload),
+  listBackups: name => ipcRenderer.invoke('library:backups', name),
+  restoreBackup: payload => ipcRenderer.invoke('library:restore', payload),
   openLibraryFolder: () => ipcRenderer.invoke('library:open-folder'),
   launchVlc: payload => ipcRenderer.invoke('vlc:launch', payload),
   chooseVlc: () => ipcRenderer.invoke('vlc:choose'),

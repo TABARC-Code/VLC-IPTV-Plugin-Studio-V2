@@ -3,6 +3,7 @@
 const state = {
   channels: [],
   library: '',
+  revision: null,
   search: '',
   categories: new Set(),
   countries: new Set(),
@@ -96,6 +97,7 @@ async function loadLibrary(name) {
   if (!name) return;
   const result = await window.studio.loadLibrary(name);
   state.library = result.name;
+  state.revision = result.revision;
   state.channels = result.channels;
   state.dirty = false;
   state.categories.clear();
@@ -197,7 +199,9 @@ $('#import').addEventListener('click', () => guarded(async () => {
   if (!canDiscardChanges('importing a CSV')) return;
   const result = await window.studio.chooseCsv();
   if (!result) return;
-  state.library = result.name; state.channels = result.channels; state.dirty = false;
+  state.library = result.name; state.revision = result.revision;
+  state.channels = result.channels; state.dirty = false;
+  state.categories.clear(); state.countries.clear();
   await refreshLibraries(result.name); render(); say(`Imported ${result.channels.length} channels into ${result.name}.`);
 }));
 $('#import-m3u').addEventListener('click', () => guarded(async () => {
@@ -205,6 +209,7 @@ $('#import-m3u').addEventListener('click', () => guarded(async () => {
   const result = await window.studio.chooseM3u();
   if (!result) return;
   state.library = result.name;
+  state.revision = result.revision;
   state.channels = result.channels;
   state.dirty = false;
   state.categories.clear();
@@ -237,12 +242,68 @@ $('#duplicates').addEventListener('click', () => guarded(async () => {
   }
   $('#duplicate-dialog').showModal();
 }));
-$('#save').addEventListener('click', () => guarded(async () => {
-  const name = state.library || prompt('Library filename', 'channels.csv');
+async function saveCurrentLibrary(asCopy) {
+  const suggestion = state.library ? state.library.replace(/\.csv$/i, '-copy.csv') : 'channels.csv';
+  const name = asCopy || !state.library ? prompt('Library filename', suggestion) : state.library;
   if (!name) return;
-  const result = await window.studio.saveLibrary({ name, channels: state.channels });
-  state.library = result.name; state.dirty = false; await refreshLibraries(result.name); render(); say(`${result.name} saved.`);
+  const expectedRevision = asCopy || name !== state.library ? null : state.revision;
+  const result = await window.studio.saveLibrary({
+    name, channels: state.channels, expectedRevision
+  });
+  state.library = result.name;
+  state.revision = result.revision;
+  state.dirty = false;
+  await refreshLibraries(result.name);
+  render();
+  say(`${result.name} saved.`);
+}
+
+$('#save').addEventListener('click', () => guarded(() => saveCurrentLibrary(false)));
+$('#save-as').addEventListener('click', () => guarded(() => saveCurrentLibrary(true)));
+
+$('#backups').addEventListener('click', () => guarded(async () => {
+  if (!state.library) {
+    say('Choose a saved library before opening its backups.', true);
+    return;
+  }
+  const backups = await window.studio.listBackups(state.library);
+  const selector = $('#backup-options');
+  selector.replaceChildren();
+  for (const item of backups) {
+    const option = document.createElement('option');
+    option.value = item.id;
+    option.textContent = new Date(item.createdAt).toLocaleString('en-GB');
+    selector.append(option);
+  }
+  if (!backups.length) {
+    say('This library has no previous saved versions.');
+    return;
+  }
+  $('#backup-dialog').showModal();
 }));
+
+$('#backup-cancel').addEventListener('click', () => $('#backup-dialog').close());
+$('#backup-form').addEventListener('submit', event => {
+  event.preventDefault();
+  guarded(async () => {
+    if (!canDiscardChanges('restoring a previous library version')) return;
+    if (!confirm('Replace this library with the selected backup? The current copy will be backed up.')) return;
+    const result = await window.studio.restoreBackup({
+      name: state.library,
+      backupId: $('#backup-options').value,
+      expectedRevision: state.revision
+    });
+    state.library = result.name;
+    state.revision = result.revision;
+    state.channels = result.channels;
+    state.dirty = false;
+    state.categories.clear();
+    state.countries.clear();
+    $('#backup-dialog').close();
+    render();
+    say('Previous library version restored. The copy it replaced is retained in backups.');
+  });
+});
 $('#export').addEventListener('click', () => guarded(async () => {
   const channels = visibleChannels();
   const result = await window.studio.exportPlaylist({ channels });

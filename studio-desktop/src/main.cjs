@@ -10,10 +10,11 @@ const crypto = require('node:crypto');
 const { pathToFileURL } = require('node:url');
 const { MAX_CSV_BYTES, m3u, readChannels, writeChannels } = require('./core/channels.cjs');
 const { parseM3u } = require('./core/m3u.cjs');
+const { importLibrary, listBackups, loadBackup, readLibrary, saveLibrary } = require('./core/library.cjs');
 const { duplicateCandidates } = require('./core/duplicates.cjs');
 const { cleanupOwnedPlaylists, createPrivatePlaylist, isTrustedRendererUrl, removePlaylist } = require('./core/runtime.cjs');
 
-const VERSION = '3.5.1';
+const VERSION = '3.5.2';
 const rendererPath = path.join(__dirname, 'renderer', 'index.html');
 const rendererUrl = pathToFileURL(rendererPath).href;
 const activePlaylists = new Set();
@@ -145,13 +146,8 @@ handleIpc('library:choose-csv', async () => {
   if (stat.size > MAX_CSV_BYTES) throw new Error('That CSV is larger than 20 MB.');
   const text = await fs.readFile(source, 'utf8');
   const channels = readChannels(text);
-  await ensureLibrary();
-  let name = safeLibraryName(path.basename(source));
-  const parsed = path.parse(name);
-  let suffix = 2;
-  while (fsSync.existsSync(path.join(libraryDir(), name))) name = `${parsed.name}-${suffix++}${parsed.ext}`;
-  await atomicWrite(path.join(libraryDir(), name), writeChannels(channels));
-  return { name, channels };
+  const stored = await importLibrary(libraryDir(), safeLibraryName(path.basename(source)), writeChannels(channels));
+  return { ...stored, channels };
 });
 
 handleIpc('library:choose-m3u', async () => {
@@ -164,26 +160,34 @@ handleIpc('library:choose-m3u', async () => {
   const stat = await fs.stat(source);
   if (stat.size > MAX_CSV_BYTES) throw new Error('That playlist is larger than 20 MB.');
   const channels = parseM3u(await fs.readFile(source, 'utf8'));
-  await ensureLibrary();
-  let name = safeLibraryName(path.parse(source).name + '.csv');
-  const parsed = path.parse(name);
-  let suffix = 2;
-  while (fsSync.existsSync(path.join(libraryDir(), name))) name = `${parsed.name}-${suffix++}${parsed.ext}`;
-  await atomicWrite(path.join(libraryDir(), name), writeChannels(channels));
-  return { name, channels };
+  const stored = await importLibrary(libraryDir(), safeLibraryName(path.parse(source).name + '.csv'), writeChannels(channels));
+  return { ...stored, channels };
 });
 
 handleIpc('library:load', async (_event, requestedName) => {
   const name = safeLibraryName(requestedName);
-  const text = await fs.readFile(path.join(libraryDir(), name), 'utf8');
-  return { name, channels: readChannels(text) };
+  const loaded = await readLibrary(libraryDir(), name);
+  return { name, channels: readChannels(loaded.contents), revision: loaded.revision };
 });
 
 handleIpc('library:save', async (_event, payload) => {
   const name = safeLibraryName(payload?.name);
   const output = writeChannels(payload?.channels || []);
-  await atomicWrite(path.join(libraryDir(), name), output);
-  return { name };
+  return saveLibrary(libraryDir(), name, output, payload?.expectedRevision ?? null);
+});
+
+handleIpc('library:backups', async (_event, requestedName) => {
+  return listBackups(libraryDir(), safeLibraryName(requestedName));
+});
+
+handleIpc('library:restore', async (_event, payload) => {
+  const name = safeLibraryName(payload?.name);
+  const contents = await loadBackup(libraryDir(), name, payload?.backupId);
+  const channels = readChannels(contents);
+  const saved = await saveLibrary(
+    libraryDir(), name, writeChannels(channels), payload?.expectedRevision ?? null
+  );
+  return { ...saved, channels };
 });
 
 handleIpc('library:duplicates', async (_event, channels) => duplicateCandidates(channels));

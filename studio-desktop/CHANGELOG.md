@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.5.2 — 9 November 2026
+
+- I added private recovery copies for saved channel libraries, retaining the five newest per library.
+- I added revision checks to protect files changed by other applications, and a Save as option for preserving unsaved work.
+- I added a Recover dialogue and changed CSV/M3U importing to reserve unique filenames without overwriting existing libraries.
+
+
 ## 3.5.1 — 9 November 2026
 
 - Anonymous channel IDs are now derived from channel identity rather than CSV row number. Repeated identical channels receive distinct suffixes.
