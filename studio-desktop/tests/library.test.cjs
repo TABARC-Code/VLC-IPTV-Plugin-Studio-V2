@@ -84,6 +84,8 @@ test('backup selection and existing library paths cannot escape the managed dire
   const dir = await fixture(t);
   await assert.rejects(readLibrary(dir, '../outside.csv'), /Invalid library/);
   await assert.rejects(loadBackup(dir, 'list.csv', '../secret.csv'), /Invalid backup/);
-  await fs.symlink(path.join(dir, 'missing.csv'), path.join(dir, 'linked.csv'));
-  await assert.rejects(readLibrary(dir, 'linked.csv'), /regular file/);
+  if (process.platform !== 'win32') {
+    await fs.symlink(path.join(dir, 'missing.csv'), path.join(dir, 'linked.csv'));
+    await assert.rejects(readLibrary(dir, 'linked.csv'), /regular file/);
+  }
 });
