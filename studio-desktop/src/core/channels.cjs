@@ -88,8 +88,8 @@ function audienceFromGroup(group) {
   return AUDIENCES.has(value) ? value : 'unrated';
 }
 
-function stableId(channel, rowNumber) {
-  const material = `${channel.name}\0${channel.stream_url}\0${rowNumber}`;
+function stableId(channel) {
+  const material = `${channel.name}\0${channel.stream_url}`;
   return crypto.createHash('sha256').update(material).digest('hex').slice(0, 12);
 }
 
@@ -102,7 +102,7 @@ function validateChannel(raw, rowNumber, seen = new Set()) {
     if (value.length > MAX_FIELD_CHARS) throw new Error(`Row ${rowNumber}: ${field} is too long.`);
   }
   channel.enabled = toBoolean(raw.enabled ?? 'true', 'enabled', rowNumber);
-  channel.adult = toBoolean(raw.adult ?? 'false', 'adult', rowNumber);
+  const legacyAdult = toBoolean(raw.adult ?? 'false', 'adult', rowNumber);
   channel.audience = clean(raw.audience).toLowerCase();
   if (channel.audience && !AUDIENCES.has(channel.audience)) {
     throw new Error(`Row ${rowNumber}: unsupported audience label.`);
@@ -111,7 +111,10 @@ function validateChannel(raw, rowNumber, seen = new Set()) {
   if (!channel.audience) {
     const groupAudience = audienceFromGroup(channel.category);
     if (groupAudience === 'xxx' || groupAudience === '18+') channel.audience = groupAudience;
-    else if (channel.adult) channel.audience = '18+';
+  }
+  // The older adult flag still matters when newer labels contradict it.
+  if (legacyAdult && channel.audience !== 'xxx' && channel.audience !== '18+') {
+    channel.audience = '18+';
   }
   channel.adult = channel.audience === 'xxx' || channel.audience === '18+';
   if (!channel.name) throw new Error(`Row ${rowNumber}: name is required.`);
@@ -126,8 +129,14 @@ function validateChannel(raw, rowNumber, seen = new Set()) {
   if (!['http:', 'https:', 'rtsp:', 'rtmp:', 'udp:'].includes(parsed.protocol)) {
     throw new Error(`Row ${rowNumber}: unsupported stream protocol ${parsed.protocol}`);
   }
-  channel.id = channel.id || stableId(channel, rowNumber);
-  if (seen.has(channel.id)) throw new Error(`Row ${rowNumber}: duplicate id “${channel.id}”.`);
+  if (!channel.id) {
+    const baseId = stableId(channel);
+    channel.id = baseId;
+    let suffix = 2;
+    while (seen.has(channel.id)) channel.id = `${baseId}-${suffix++}`;
+  } else if (seen.has(channel.id)) {
+    throw new Error(`Row ${rowNumber}: duplicate id “${channel.id}”.`);
+  }
   seen.add(channel.id);
   return channel;
 }

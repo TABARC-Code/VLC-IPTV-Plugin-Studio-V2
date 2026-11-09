@@ -91,3 +91,27 @@ test('CSV import rejects more than 20,000 channel rows', () => {
   for (let index = 0; index <= MAX_CHANNELS; index += 1) rows.push(`Channel ${index},https://example.test/${index}`);
   assert.throws(() => readChannels(rows.join('\n')), /20,000-channel limit/i);
 });
+
+test('generated IDs remain stable when independent CSV rows move', () => {
+  const header = 'name,stream_url';
+  const first = 'Channel One,https://example.test/one';
+  const second = 'Channel Two,https://example.test/two';
+  const forward = readChannels([header, first, second].join('\n'));
+  const reversed = readChannels([header, second, first].join('\n'));
+  assert.equal(forward[0].id, reversed[1].id);
+  assert.equal(forward[1].id, reversed[0].id);
+  assert.match(forward[0].id, /^[a-f0-9]{12}$/);
+});
+
+test('repeated anonymous records keep separate IDs and explicit duplicates still fail', () => {
+  const rows = readChannels('name,stream_url\nSame,https://example.test/live\nSame,https://example.test/live\n');
+  assert.equal(rows[1].id, rows[0].id + '-2');
+  assert.throws(() => readChannels('id,name,stream_url\nrepeat,A,https://example.test/a\nrepeat,B,https://example.test/b\n'), /duplicate id/i);
+});
+
+test('legacy adult=true remains restricted even with a conflicting safe audience label', () => {
+  const rows = readChannels('name,group,stream_url,audience,adult\nFilm,Films,https://example.test/film,unrated,true\nCartoon,Cartoons,https://example.test/animation,cartoons,true\n');
+  assert.deepEqual(rows.map(row => row.audience), ['18+', '18+']);
+  assert.equal(rows.every(row => row.adult), true);
+  assert.deepEqual(readChannels(writeChannels(rows)), rows);
+});
