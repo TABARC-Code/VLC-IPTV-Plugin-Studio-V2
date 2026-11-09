@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.5.1 — 9 November 2026
+
+- Generated Studio channel IDs now follow the channel name and stream address, so rearranging distinct CSV records leaves their identities intact. Identical anonymous records receive separate suffixes.
+- Legacy adult flags remain restrictive when a channel also carries a conflicting unrestricted audience label. Studio preserves the effective 18+ classification when it saves the native-compatible CSV.
+- Updated the Studio channel-format reference and aligned the native extension and desktop version identifiers.
+
+
 ## 3.5.0 — 28 October 2026
 
 - Added country and language dropdowns to the native VLC extension, populated from non-empty metadata in the loaded CSV.

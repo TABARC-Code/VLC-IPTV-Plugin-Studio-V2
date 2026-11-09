@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.5.1 — 9 November 2026
+
+- Anonymous channel IDs are now derived from channel identity rather than CSV row number. Repeated identical channels receive distinct suffixes.
+- Adult flags cannot be downgraded by inconsistent unrestricted audience metadata during import or saving.
+- Updated the Studio version display and channel-format documentation.
+
+
 ## 3.5.0 — 28 October 2026
 
 - Aligned Studio’s release identity with the native VLC extension’s new country and language filters.

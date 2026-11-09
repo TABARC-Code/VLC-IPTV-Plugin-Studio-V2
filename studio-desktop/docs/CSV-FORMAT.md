@@ -10,7 +10,7 @@ Only `name` and `stream_url` are compulsory on import. Missing optional fields a
 
 | Column | Purpose | Example |
 |---|---|---|
-| `id` | Unique stable row ID. Generated if blank. | `bbc-news-demo` |
+| `id` | Unique row ID. Generated from name and stream URL when blank; reordering distinct rows does not change it. | `bbc-news-demo` |
 | `name` | Display name. | `News Channel` |
 | `group` | User-controlled channel group; shown as Category in Studio. | `News` |
 | `country` | Code or readable country name. | `GB` |
@@ -47,4 +47,4 @@ The addresses above are placeholders and are disabled. Replace them with authori
 - Studio exports enabled rows only. Search and filters determine which part of the library is handed to VLC.
 
 
-The Studio export is directly readable by the VLC 3 Lua extension. Studio accepts legacy `category` and `adult` headings on import. Adult and XXX classification is preserved explicitly in the `audience` column; an older `adult=true` becomes `18+`, never `XXX` by inference. Keep notes on one physical line for native VLC compatibility.
+The Studio export is directly readable by the VLC 3 Lua extension. Studio accepts legacy `category` and `adult` headings on import. Adult and XXX classification is preserved explicitly in the `audience` column; an older `adult=true` becomes `18+`, never `XXX` by inference. Conflicting unrestricted audience labels do not override an existing `adult=true` flag. Keep notes on one physical line for native VLC compatibility.
