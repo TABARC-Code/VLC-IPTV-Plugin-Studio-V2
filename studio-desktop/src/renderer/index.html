@@ -92,6 +92,7 @@
             <option value="2">Next 48 hours</option>
             <option value="7">Next 7 days</option>
           </select>
+          <button class="button quiet" id="guide-map" type="button" disabled>Match channels</button>
           <button class="button quiet" id="guide-clear" type="button">Clear guide</button>
         </div>
         <p class="hint" id="guide-status" role="status" aria-live="polite">Import a local XMLTV file to see programme listings.</p>
@@ -109,6 +110,29 @@
     <p>The app supplies no feeds, bypasses no access controls and doesn’t promise that a URL will play. Treat playlists containing tokens or credentials as private.</p>
     <p class="fine-print">Independent software by TABARC-Code. Not affiliated with or endorsed by VideoLAN, any broadcaster or any service provider.</p>
     <button class="button primary wide" id="accept">I understand — open the studio</button>
+  </dialog>
+
+  <dialog id="guide-map-dialog">
+    <form id="guide-map-form">
+      <h2>Match programme guide channels</h2>
+      <p>Choose the saved channel and its exact XMLTV entry. The link stays separate from the channel CSV.</p>
+      <div class="guide-map-grid">
+        <label>Find a library channel
+          <input id="guide-map-channel-filter" type="search" placeholder="Channel name or TVG ID" autocomplete="off">
+          <select id="guide-map-channel" size="7" required aria-label="Library channel"></select>
+        </label>
+        <label>Find an XMLTV channel
+          <input id="guide-map-target-filter" type="search" placeholder="Guide name or ID" autocomplete="off">
+          <select id="guide-map-target" size="7" required aria-label="XMLTV channel"></select>
+        </label>
+      </div>
+      <p class="hint" id="guide-map-info" role="status" aria-live="polite"></p>
+      <div class="form-actions">
+        <button class="button quiet" id="guide-map-remove" type="button">Remove link</button>
+        <button class="button quiet" id="guide-map-cancel" type="button">Close</button>
+        <button class="button primary" id="guide-map-save" type="submit">Save link</button>
+      </div>
+    </form>
   </dialog>
 
   <dialog id="backup-dialog">

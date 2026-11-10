@@ -14,6 +14,7 @@ const { importLibrary, listBackups, loadBackup, readLibrary, saveLibrary } = req
 const { duplicateCandidates } = require('./core/duplicates.cjs');
 const { importGuide, writeGuide, readGuide, clearGuide } = require('./core/guide-cache.cjs');
 const { guideSummary, searchGuide } = require('./core/xmltv.cjs');
+const { readMappings, setMapping } = require('./core/guide-mappings.cjs');
 const { cleanupOwnedPlaylists, createPrivatePlaylist, isTrustedRendererUrl, removePlaylist } = require('./core/runtime.cjs');
 
 const VERSION = '3.6.0';
@@ -220,8 +221,38 @@ handleIpc('guide:import', async () => {
 });
 
 handleIpc('guide:search', async (_event, payload) => {
+  const library = payload?.library ? safeLibraryName(payload.library) : null;
+  const mappings = library ? await readMappings(guideDir(), library) : {};
   return searchGuide(await currentGuide(), payload?.channels, payload?.query ?? '',
-    payload?.windowDays ?? 2);
+    payload?.windowDays ?? 2, Date.now(), mappings);
+});
+
+handleIpc('guide:catalogue', async (_event, requestedLibrary) => {
+  const name = safeLibraryName(requestedLibrary);
+  const guide = await currentGuide();
+  if (!guide) throw new Error('Import a programme guide before matching channels.');
+  const saved = await readLibrary(libraryDir(), name);
+  const channels = readChannels(saved.contents).map(channel => ({
+    id: channel.id, name: channel.name, tvg_id: channel.tvg_id, adult: channel.adult
+  }));
+  return { channels, guideChannels: guide.channels, mappings: await readMappings(guideDir(), name) };
+});
+
+handleIpc('guide:set-mapping', async (_event, payload) => {
+  const name = safeLibraryName(payload?.library);
+  const guide = await currentGuide();
+  if (!guide) throw new Error('Import a programme guide before changing channel links.');
+  const saved = await readLibrary(libraryDir(), name);
+  const channels = readChannels(saved.contents);
+  if (!channels.some(channel => channel.id === payload?.channelId)) {
+    throw new Error('That channel no longer exists in the saved library.');
+  }
+  if (payload?.guideId !== null &&
+      !guide.channels.some(channel => channel.id === payload?.guideId)) {
+    throw new Error('Select a channel ID from the imported programme guide.');
+  }
+  await setMapping(guideDir(), name, payload.channelId, payload.guideId);
+  return true;
 });
 
 handleIpc('guide:clear', async () => {
