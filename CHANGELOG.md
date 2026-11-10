@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.8.0 — 10 November 2026
+
+- I added a remembered local XMLTV source and a manual refresh option in Studio. No background download or scheduled network activity is involved.
+- I compare a source fingerprint before refreshing, keeping the existing schedule when the local file has not changed.
+- I keep the last usable guide if its replacement cannot be read, fails to parse or contains far fewer programmes. I can still deliberately import a smaller guide.
+- I added a Forget source control that clears the saved file location without changing programme listings or manual channel links.
+- I updated the private cache format to retain source details alongside the guide, while preserving support for existing guide caches.
+
+
 ## 3.7.0 — 10 November 2026
 
 - I added explicit XMLTV channel matching in Studio for channels whose guide IDs do not match the imported schedule.

@@ -10,6 +10,7 @@ This is a live list, not invented archaeology.
 - [ ] Drag-and-drop category reassignment.
 - [x] Local XMLTV EPG import with exact TVG ID matching, caching and expiry status.
 - [x] Manual per-library guide ID linking and removal.
+- [x] Manual refresh from a remembered local XMLTV source, with safe fallback on failure.
 - [ ] Scheduled guide refresh and remote downloads.
 - [x] Non-destructive duplicate review by exact stream URL and guide ID.
 - [ ] Signed installers for supported platforms.
