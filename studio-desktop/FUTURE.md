@@ -8,7 +8,8 @@ This is a live list, not invented archaeology.
 - [x] Atomic saving and constrained VLC launch.
 - [x] Save-time revision checks and a five-copy library recovery history.
 - [ ] Drag-and-drop category reassignment.
-- [ ] EPG/XMLTV mapping with local caching and clear expiry.
+- [x] Local XMLTV EPG import with exact TVG ID matching, caching and expiry status.
+- [ ] Manual guide ID mapping and scheduled guide refresh.
 - [x] Non-destructive duplicate review by exact stream URL and guide ID.
 - [ ] Signed installers for supported platforms.
 - [ ] Optional Rust/Tauri shell after equivalent integration tests exist.

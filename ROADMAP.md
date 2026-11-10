@@ -18,6 +18,10 @@ The optional Studio now imports local M3U/M3U8 channel lists as disabled review 
 
 The native VLC extension now builds country and language selectors from CSV metadata. These exact filters combine with search, group and audience controls and govern the displayed list, queueing and export.
 
+## Added in 3.6.0
+
+The optional desktop Studio now accepts local XMLTV and gzip-compressed guide files. It matches programme data against stored TVG IDs, caches schedule text independently of channel libraries, and shows current or upcoming listings. Native VLC still has no embedded EPG. Automatic downloading, remote refresh and manual ID mapping remain future work.
+
 ## Next: verify and remove friction
 
 Validate the installers and in-player interface on Windows and macOS. Check keyboard navigation, screen readers, high DPI, long paths and non-ASCII filenames. Confirm provider-format behaviour with authorised sample streams. Review the 1,000-item display cap and the 2 MiB input limit using measured timings before raising either. Add useful failures rather than optimistic status labels.
@@ -28,7 +32,7 @@ Plan favourites, recently viewed, multiple lists, custom collections, sorting, b
 
 ## Import and guides
 
-Studio has local M3U/M3U8 import and operating-system file choosers. Plan TXT import, drag and drop, watched folders and controlled automatic reload. Add XMLTV EPG ingestion, mapping and guide views, with clear cache and expiry rules. These are not present in the native VLC extension.
+Studio has local M3U/M3U8 import and operating-system file choosers. Plan TXT import, drag and drop, watched folders and controlled automatic reload. Studio now has local XMLTV EPG ingestion, exact TVG ID matching, a searchable guide and a clearable offline cache with expiry status. Remote refresh, manual ID mapping and broader XMLTV dialect support remain future work. The native VLC extension still has no EPG panel.
 
 ## A larger studio
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.6.0 — 10 November 2026
+
+- I added local XMLTV and XMLTV gzip import, with programme titles, descriptions and broadcast times.
+- I added a programme-guide panel with exact channel-ID matching, schedule searches and two selectable time windows.
+- I added a separate, clearable local guide cache with schedule expiry warnings. I left channel CSV records and VLC playback unchanged.
+- I limited source and expanded guide sizes, refused internal XML entity definitions, and added a programme-guide reference.
+
+
 ## 3.5.2 — 9 November 2026
 
 - I added private recovery copies for saved channel libraries, retaining the five newest per library.
