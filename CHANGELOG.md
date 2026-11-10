@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.7.0 — 10 November 2026
+
+- I added explicit XMLTV channel matching in Studio for channels whose guide IDs do not match the imported schedule.
+- I kept manual links in separate private, per-library files, leaving saved channel CSVs and the guide cache unchanged.
+- I added searchable selections and an option to remove a manual link, returning to the original TVG ID.
+- I updated guide searches so separate channel variants sharing one programme-guide ID can each appear in results.
+- I aligned the native extension and Studio version numbers and updated the setup guides.
+
+
 ## 3.6.0 — 10 November 2026
 
 - I added local XMLTV programme-guide importing to Studio, including compressed gzip files and supported broadcast timezone offsets.

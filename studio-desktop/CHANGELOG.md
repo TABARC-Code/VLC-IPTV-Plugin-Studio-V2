@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.7.0 — 10 November 2026
+
+- I added explicit per-library links between Studio channels and imported XMLTV IDs, with a searchable matching dialogue.
+- I kept those links in a separate private file, so saving or removing them does not change channel CSVs.
+- I added a way to clear manual links and return to the channel's original TVG ID.
+- I updated guide searches to show listings under each channel variant linked to the same XMLTV ID.
+
+
 ## 3.6.0 — 10 November 2026
 
 - I added local XMLTV and XMLTV gzip import, with programme titles, descriptions and broadcast times.

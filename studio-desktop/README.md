@@ -2,7 +2,7 @@
 
 **A local-first channel organiser for people who want VLC to play the video and a calmer tool to manage the list.**
 
-Version **3.6.0** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
+Version **3.7.0** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
 
 No channels, subscriptions or access credentials are supplied. This is plumbing, not a pirate treasure map.
 
@@ -14,6 +14,7 @@ No channels, subscriptions or access credentials are supplied. This is plumbing,
 - Import local M3U channel lists as disabled candidates; the app leaves original files untouched and rejects HLS segment manifests.
 - Organise channels by category, country and language.
 - Import local XMLTV programme guides, including gzip files, and search matched listings for the next 48 hours or seven days.
+- Link a saved channel to an exact guide entry without changing its original TVG ID, and remove the link independently when it is no longer needed.
 - Search instantly without changing the underlying file.
 - Add, edit, enable, disable and label individual channels as 18+.
 - Hide 18+ rows by default; reveal them with an explicit switch.
