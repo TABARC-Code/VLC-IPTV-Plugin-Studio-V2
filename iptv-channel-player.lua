@@ -453,15 +453,7 @@ function show_csv_guide()
         "Set enabled to true only for a stream you are authorised to use; optional cells can stay blank. " ..
         "Save as UTF-8 CSV and choose Load / Reload CSV.</p><p><code>" ..
         "id,name,group,country,language,stream_url,logo_url,tvg_id,enabled</code></p>" ..
-        "<h3>Optional AI prompt</h3><p>Copy the following into an AI assistant. Share only public URLs or placeholders; " ..
-        "put private access tokens into your local file afterwards. This extension does not upload your list.</p>" ..
-        "<p>Format the channel details I supply as UTF-8 comma-separated CSV with this exact header: " ..
-        "id,name,group,country,language,stream_url,logo_url,tvg_id,enabled. Use unique IDs. Quote commas and double " ..
-        "embedded quotation marks. Keep fields on one line. Leave unknown metadata blank. Never invent working " ..
-        "stream URLs, credentials or claims of permission. If a URL is missing, use an example.org placeholder " ..
-        "and enabled=false. Use enabled=true only where I explicitly mark my supplied stream as authorised. " ..
-        "Return CSV only, without a Markdown fence. My channel details follow: [paste public details here].</p>" ..
-        "<p>The full CSV_GUIDE.md and AI_CSV_PROMPT.md files include worked examples and troubleshooting.</p>", 1, 11, 6, 1, 760, 240)
+        "<p>For worked examples and troubleshooting, see CSV_GUIDE.md. Keep stream credentials private.</p>", 1, 11, 6, 1, 760, 240)
 end
 
 function activate()
@@ -498,7 +490,7 @@ function activate()
     dialog:add_button("Export M3U", export_m3u, 6, 8)
     status = dialog:add_label("Load your CSV to begin. Supplied examples are disabled placeholders.", 1, 9, 6, 1)
     dialog:add_button("Help & usage", show_help, 1, 10, 2, 1)
-    dialog:add_button("CSV & AI guide", show_csv_guide, 3, 10, 2, 1)
+    dialog:add_button("CSV guide", show_csv_guide, 3, 10, 2, 1)
     dialog:add_button("Close extension", close, 5, 10, 2, 1)
     if exists(default_csv()) then load_csv() end
     local notice_file = vlc.config.configdir() .. "/iptv-channel-player-notice-seen.txt"

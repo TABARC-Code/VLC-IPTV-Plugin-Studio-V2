@@ -4,7 +4,7 @@ The development brief is the direction of travel. This page distinguishes implem
 
 ## Implemented in 1.4.7
 
-Native VLC dialog, CSV validation, group and text filters, enabled records, selected playback, queueing, M3U export, backup handling, user-local installation, branding and beginner/AI CSV instructions. The reader does not modify the original channel database.
+Native VLC dialog, CSV validation, group and text filters, enabled records, selected playback, queueing, M3U export, backup handling, user-local installation, branding and beginner CSV instructions. The reader does not modify the original channel database.
 
 ## Added in 1.5.0
 

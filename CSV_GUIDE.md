@@ -145,12 +145,12 @@ logo_url should be a direct image URL if your player supports it. tvg_id should 
 
 If loading fails, the previous valid list remains loaded. Save spreadsheet changes before reloading. The extension reads the file; it does not write changes back into your database.
 
-## Want AI to format the list?
+## Prepare a channel list
 
-Use [AI_CSV_PROMPT.md](AI_CSV_PROMPT.md). It gives you a prompt to copy, including instructions for missing URLs, commas and enabled flags. The same short prompt is available inside VLC through CSV & AI guide. Treat the AI result as a draft and check it before importing.
+Use the required CSV header and worked examples above. Keep each channel on one physical row, quote fields containing commas, and leave unknown metadata blank. Streams without a verified URL should stay disabled.
 
 ## Usage and privacy
 
 Do not misuse this software. Use streams you are authorised to watch and follow applicable laws, provider terms and licensing requirements. A list being free to download does not establish those rights. Playback and availability are not guaranteed.
 
-Private URLs can contain passwords or access tokens. Keep them out of public GitHub commits and AI prompts. Add sensitive parts locally after the AI has formatted the public metadata. Keep a backup of your own CSV; it is the bit you would miss.
+Private URLs can contain passwords or access tokens. Keep them out of public GitHub commits, screenshots and support requests. Add sensitive parts locally. Keep a backup of your own CSV; it is the bit you would miss.
