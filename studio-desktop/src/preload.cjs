@@ -15,6 +15,10 @@ contextBridge.exposeInMainWorld('studio', Object.freeze({
   launchVlc: payload => ipcRenderer.invoke('vlc:launch', payload),
   chooseVlc: () => ipcRenderer.invoke('vlc:choose'),
   exportPlaylist: payload => ipcRenderer.invoke('playlist:export', payload),
-  reviewDuplicates: channels => ipcRenderer.invoke('library:duplicates', channels)
+  reviewDuplicates: channels => ipcRenderer.invoke('library:duplicates', channels),
+  guideInfo: () => ipcRenderer.invoke('guide:info'),
+  importGuide: () => ipcRenderer.invoke('guide:import'),
+  searchGuide: request => ipcRenderer.invoke('guide:search', request),
+  clearGuide: () => ipcRenderer.invoke('guide:clear')
 }));
 

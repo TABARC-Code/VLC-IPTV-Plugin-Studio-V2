@@ -12,6 +12,10 @@ const state = {
   dirty: false
 };
 
+let guideInfo = null;
+let guideRequest = 0;
+let guideTimer = null;
+
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
 const h = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
@@ -86,6 +90,7 @@ function render() {
     </tr>`;
   }).join('') : '<tr><td colspan="6" class="empty">No channels match this view.</td></tr>';
   refreshIcons();
+  queueGuideSearch();
 }
 
 async function refreshLibraries(selectName = state.library) {
@@ -144,11 +149,103 @@ function commitEditor(event) {
   say(`${channel.name} ${index >= 0 ? 'updated' : 'added'}. Save the library when ready.`);
 }
 
+
+function showGuideInfo() {
+  const badge = $('#guide-badge');
+  if (!guideInfo) {
+    badge.textContent = 'Not loaded';
+    $('#guide-status').textContent = 'Import a local XMLTV file to see programme listings.';
+    $('#guide-results').replaceChildren();
+    return;
+  }
+  const status = guideInfo.expired ? 'schedule ended' :
+    guideInfo.old ? 'imported over seven days ago' : 'stored locally';
+  badge.textContent = guideInfo.programmes.toLocaleString('en-GB') + ' listings · ' + status;
+  $('#guide-status').textContent = 'Exact TVG ID matching. No automatic channel renaming or online refresh.';
+}
+
+function queueGuideSearch() {
+  if (!$('#guide-panel').open) return;
+  clearTimeout(guideTimer);
+  guideTimer = setTimeout(() => {
+    void showGuideResults().catch(error => say(error.message || String(error), true));
+  }, 160);
+}
+
+async function showGuideResults() {
+  const request = ++guideRequest;
+  const results = $('#guide-results');
+  if (!guideInfo) {
+    results.replaceChildren();
+    return;
+  }
+  const response = await window.studio.searchGuide({
+    channels: visibleChannels().map(channel => ({ name: channel.name, tvg_id: channel.tvg_id })),
+    query: $('#guide-search').value,
+    windowDays: Number($('#guide-window').value)
+  });
+  if (request !== guideRequest) return;
+  results.replaceChildren();
+  const status = guideInfo.expired ? 'The guide has expired. Import a newer file. ' : '';
+  $('#guide-status').textContent = status +
+    response.matchedChannels + ' channel IDs matched; ' +
+    response.unmatchedChannels + ' have no matching guide ID. ' +
+    (response.more ? 'Showing the first 120 entries.' : '');
+  if (!response.results.length) {
+    const empty = document.createElement('p');
+    empty.className = 'guide-empty';
+    empty.textContent = 'No matching programmes in this period. Check each channel’s TVG ID or load a fresher guide.';
+    results.append(empty);
+    return;
+  }
+  const dateOptions = { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' };
+  for (const item of response.results) {
+    const entry = document.createElement('div');
+    entry.className = 'guide-entry';
+    const time = document.createElement('time');
+    time.textContent = new Date(item.start).toLocaleString('en-GB', dateOptions) +
+      (item.stop === null ? '' : ' to ' + new Date(item.stop).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }));
+    const channel = document.createElement('span');
+    channel.className = 'guide-channel';
+    channel.textContent = item.channelName;
+    const programme = document.createElement('div');
+    const title = document.createElement('strong');
+    title.textContent = item.title;
+    programme.append(title);
+    if (item.subtitle || item.description) {
+      const description = document.createElement('p');
+      description.textContent = [item.subtitle, item.description].filter(Boolean).join(' · ');
+      programme.append(description);
+    }
+    entry.append(time, channel, programme);
+    results.append(entry);
+  }
+}
+
 async function guarded(action) {
   try { await action(); } catch (error) { say(error.message || String(error), true); }
 }
 
 $('#search').addEventListener('input', event => { state.search = event.target.value; render(); });
+$('#guide-panel').addEventListener('toggle', queueGuideSearch);
+$('#guide-search').addEventListener('input', queueGuideSearch);
+$('#guide-window').addEventListener('change', queueGuideSearch);
+$('#guide-import').addEventListener('click', () => guarded(async () => {
+  const info = await window.studio.importGuide();
+  if (!info) return;
+  guideInfo = info;
+  showGuideInfo();
+  queueGuideSearch();
+  say('Local XMLTV guide imported.');
+}));
+$('#guide-clear').addEventListener('click', () => guarded(async () => {
+  if (!guideInfo || !confirm('Delete the locally cached programme guide? Channel libraries will not change.')) return;
+  await window.studio.clearGuide();
+  guideRequest++;
+  guideInfo = null;
+  showGuideInfo();
+  say('Programme guide cache cleared.');
+}));
 document.addEventListener('keydown', event => {
   if (event.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) { event.preventDefault(); $('#search').focus(); }
 });
@@ -331,6 +428,12 @@ guarded(async () => {
   const info = await window.studio.appInfo();
   $('#version').textContent = `v${info.version}`;
   await refreshLibraries();
+  try {
+    guideInfo = await window.studio.guideInfo();
+    showGuideInfo();
+  } catch (error) {
+    $('#guide-status').textContent = 'The saved programme guide could not be read: ' + (error.message || String(error));
+  }
   if (localStorage.getItem('usage-notice-v1') !== 'accepted') $('#disclaimer').showModal();
   render();
   say(info.vlcFound ? 'Ready. VLC found.' : 'Ready. VLC will be located when you first play a list.');

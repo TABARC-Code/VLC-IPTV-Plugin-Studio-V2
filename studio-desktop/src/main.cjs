@@ -12,6 +12,8 @@ const { MAX_CSV_BYTES, m3u, readChannels, writeChannels } = require('./core/chan
 const { parseM3u } = require('./core/m3u.cjs');
 const { importLibrary, listBackups, loadBackup, readLibrary, saveLibrary } = require('./core/library.cjs');
 const { duplicateCandidates } = require('./core/duplicates.cjs');
+const { importGuide, writeGuide, readGuide, clearGuide } = require('./core/guide-cache.cjs');
+const { guideSummary, searchGuide } = require('./core/xmltv.cjs');
 const { cleanupOwnedPlaylists, createPrivatePlaylist, isTrustedRendererUrl, removePlaylist } = require('./core/runtime.cjs');
 
 const VERSION = '3.5.2';
@@ -20,6 +22,7 @@ const rendererUrl = pathToFileURL(rendererPath).href;
 const activePlaylists = new Set();
 let window;
 let customVlcPath = null;
+let cachedGuide;
 const hasSingleInstanceLock = app.requestSingleInstanceLock();
 
 if (!hasSingleInstanceLock) app.quit();
@@ -54,6 +57,15 @@ if (process.env.STUDIO_CAPTURE_PATH && !app.isPackaged) {
 
 function libraryDir() {
   return path.join(app.getPath('userData'), 'libraries');
+}
+
+function guideDir() {
+  return path.join(app.getPath('userData'), 'programme-guide');
+}
+
+async function currentGuide() {
+  if (cachedGuide === undefined) cachedGuide = await readGuide(guideDir());
+  return cachedGuide;
 }
 
 function safeLibraryName(value) {
@@ -191,6 +203,32 @@ handleIpc('library:restore', async (_event, payload) => {
 });
 
 handleIpc('library:duplicates', async (_event, channels) => duplicateCandidates(channels));
+
+handleIpc('guide:info', async () => guideSummary(await currentGuide()));
+
+handleIpc('guide:import', async () => {
+  const result = await dialog.showOpenDialog(window, {
+    title: 'Import a local XMLTV programme guide',
+    properties: ['openFile'],
+    filters: [{ name: 'XMLTV guide', extensions: ['xml', 'xmltv', 'gz'] }]
+  });
+  if (result.canceled) return null;
+  const parsed = await importGuide(result.filePaths[0]);
+  await writeGuide(guideDir(), parsed);
+  cachedGuide = parsed;
+  return guideSummary(parsed);
+});
+
+handleIpc('guide:search', async (_event, payload) => {
+  return searchGuide(await currentGuide(), payload?.channels, payload?.query ?? '',
+    payload?.windowDays ?? 2);
+});
+
+handleIpc('guide:clear', async () => {
+  await clearGuide(guideDir());
+  cachedGuide = null;
+  return true;
+});
 
 handleIpc('library:open-folder', async () => {
   await ensureLibrary();

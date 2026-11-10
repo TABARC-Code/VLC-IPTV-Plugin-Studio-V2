@@ -83,6 +83,20 @@
           <tbody id="channel-rows"><tr><td colspan="6" class="empty">No channels yet. Import a CSV or add one by hand.</td></tr></tbody>
         </table>
       </div>
+      <details class="guide-panel" id="guide-panel">
+        <summary>Programme guide <span id="guide-badge">Not loaded</span></summary>
+        <div class="guide-controls">
+          <button class="button primary" id="guide-import" type="button"><i data-lucide="file-up"></i>Import XMLTV</button>
+          <input id="guide-search" type="search" placeholder="Find a programme" aria-label="Search programme titles and descriptions">
+          <select id="guide-window" aria-label="Programme guide period">
+            <option value="2">Next 48 hours</option>
+            <option value="7">Next 7 days</option>
+          </select>
+          <button class="button quiet" id="guide-clear" type="button">Clear guide</button>
+        </div>
+        <p class="hint" id="guide-status" role="status" aria-live="polite">Import a local XMLTV file to see programme listings.</p>
+        <div class="guide-results" id="guide-results" aria-label="Matching programme listings"></div>
+      </details>
       <p class="status" id="status" role="status" aria-live="polite">Ready.</p>
     </main>
   </div>
