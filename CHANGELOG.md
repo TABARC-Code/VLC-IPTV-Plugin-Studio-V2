@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.6.0 — 10 November 2026
+
+- I added local XMLTV programme-guide importing to Studio, including compressed gzip files and supported broadcast timezone offsets.
+- I introduced a separate offline schedule cache with an explicit expiry indicator and a clear option. No channel library records are rewritten by guide imports.
+- I added a searchable programme panel with exact TVG ID matching, 48-hour and seven-day views, and existing audience-visibility rules.
+- I bounded guide input, decompression, cache and programme counts, and left external XML entities unresolved.
+- I updated both components' version identifiers, guides and development roadmap.
+
+
 ## 3.5.2 — 9 November 2026
 
 - I added up to five private recovery copies per Studio library and a Recover control for restoring an earlier saved version.

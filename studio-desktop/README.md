@@ -2,7 +2,7 @@
 
 **A local-first channel organiser for people who want VLC to play the video and a calmer tool to manage the list.**
 
-Version **3.5.2** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
+Version **3.6.0** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
 
 No channels, subscriptions or access credentials are supplied. This is plumbing, not a pirate treasure map.
 
@@ -13,6 +13,7 @@ No channels, subscriptions or access credentials are supplied. This is plumbing,
 - Import a UTF-8 CSV through the app, or place one in its managed `libraries` folder.
 - Import local M3U channel lists as disabled candidates; the app leaves original files untouched and rejects HLS segment manifests.
 - Organise channels by category, country and language.
+- Import local XMLTV programme guides, including gzip files, and search matched listings for the next 48 hours or seven days.
 - Search instantly without changing the underlying file.
 - Add, edit, enable, disable and label individual channels as 18+.
 - Hide 18+ rows by default; reveal them with an explicit switch.
@@ -54,6 +55,8 @@ The renderer has no Node access. File selection, validated reads, atomic writes 
 Open [IDIOTS-GUIDE.md](IDIOTS-GUIDE.md). The filename is deliberately blunt; the guide itself is not. It walks through installation and the CSV format without assuming that you keep a terminal under your pillow.
 
 For backup and recovery instructions, see [LIBRARY-RECOVERY.md](docs/LIBRARY-RECOVERY.md). Keep that folder private: backed-up stream URLs may contain provider credentials.
+
+For programme guide setup and limitations, see [PROGRAMME-GUIDE.md](docs/PROGRAMME-GUIDE.md). The listings remain on this computer and never alter channel CSV files.
 
 For exact columns and examples, see [CSV-FORMAT.md](docs/CSV-FORMAT.md). The product and interface rationale lives in [DESIGN.md](docs/DESIGN.md).
 
