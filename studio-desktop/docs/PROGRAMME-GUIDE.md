@@ -4,7 +4,7 @@ I added this guide to Studio so I can see programme listings beside the channel 
 
 ## Import a schedule
 
-Open Studio, expand **Programme guide** beneath the channel table and choose **Import XMLTV**. Select a local `.xml`, `.xmltv` or gzip-compressed `.gz` file containing XMLTV listings. The guide remains on the computer after Studio closes.
+Open Studio, expand **Programme guide** beneath the channel table and choose **Import XMLTV**. Select a local `.xml`, `.xmltv` or gzip-compressed `.gz` file containing XMLTV listings. The guide remains on the computer after Studio closes. Studio also remembers the selected local file for a later manual refresh.
 
 The importer accepts XMLTV channel IDs, programme titles, descriptions, subtitles, categories and start/stop times. It understands full date/time values with numeric timezone offsets, UTC/GMT and BST. It accepts an external DTD declaration as text but does not download the DTD or expand custom XML entities. Files using internal entity definitions, unusual date formats or unsupported XML extensions may need conversion before importing.
 
@@ -30,13 +30,17 @@ The programme-guide panel shows currently running and upcoming programmes within
 
 The normal channel filters and adult-visibility setting also apply to guide results. Channels hidden by the current view do not appear in the guide search.
 
-Studio warns when the schedule has run beyond its last programme or when its local copy was imported more than seven days ago. **It does not refresh automatically.** Download a new schedule from an authorised provider and import it manually.
+Studio warns when the schedule has run beyond its last programme or when its local copy was imported more than seven days ago. **It does not refresh automatically.** To refresh from the same local file, replace that file with an updated XMLTV schedule and choose **Refresh source**. The stored file is read again only when you request it.
+
+An unchanged source keeps the existing guide. A missing file, invalid XMLTV or unexpectedly large reduction in programme entries also leaves the last usable guide untouched. If a smaller guide is deliberate, use **Import XMLTV** to replace it explicitly. The guide panel shows the remembered file's name and last successful import date.
+
+Choose **Forget source** to discard the saved file location without deleting cached listings or manual channel links. **Clear guide** removes the cached guide and its source association; manual channel links still remain separate. Choose **Import XMLTV** again to select another file, including when opening an older cache that has no remembered source.
 
 ## Cache and privacy
 
-Guide data is held in Studio's local `programme-guide/guide.json` file within its application data directory. Choose **Clear guide** to delete it. The cache stores programme descriptions and channel identifiers, not playlist credentials or the source file path. Manual matching files store the library and channel identifiers as a filename digest and mapping entries; they do not hold stream URLs. Clearing the programme guide does not remove manual links, which can be cleared individually in the matching dialogue.
+Guide data is held in Studio's local `programme-guide/guide.json` file within its application data directory. Choose **Clear guide** to delete it. The private cache stores programme descriptions, channel identifiers, the remembered local file path and a SHA-256 fingerprint of its contents. It does not store the XMLTV source file itself, playlist credentials or stream URLs. The source path is not sent to programme searches or channel CSV files. Choose **Forget source** to discard that path. Manual matching files store the library and channel identifiers as a filename digest and mapping entries; they do not hold stream URLs. Clearing the programme guide does not remove manual links, which can be cleared individually in the matching dialogue.
 
-The original XMLTV file is not modified, and no network connection is made for importing or searching the guide. Back up any guide files you need independently; replacing the cached guide replaces the previous schedule.
+The original XMLTV file is not modified, and no network connection is made for importing, refreshing or searching the guide. Back up any guide files you need independently; replacing the cached guide replaces the previous schedule.
 
 ## Limits
 

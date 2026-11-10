@@ -18,6 +18,8 @@ contextBridge.exposeInMainWorld('studio', Object.freeze({
   reviewDuplicates: channels => ipcRenderer.invoke('library:duplicates', channels),
   guideInfo: () => ipcRenderer.invoke('guide:info'),
   importGuide: () => ipcRenderer.invoke('guide:import'),
+  refreshGuide: () => ipcRenderer.invoke('guide:refresh'),
+  forgetGuideSource: () => ipcRenderer.invoke('guide:forget-source'),
   searchGuide: request => ipcRenderer.invoke('guide:search', request),
   guideCatalogue: library => ipcRenderer.invoke('guide:catalogue', library),
   setGuideMapping: payload => ipcRenderer.invoke('guide:set-mapping', payload),

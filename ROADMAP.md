@@ -26,6 +26,10 @@ The optional desktop Studio now accepts local XMLTV and gzip-compressed guide fi
 
 Studio now supports explicit per-library XMLTV channel links, including overrides for otherwise unmatched TVG IDs. The link lives outside the CSV and can be removed independently. The same guide entry can now appear under separate channel variants where intentionally linked.
 
+## Added in 3.8.0
+
+Studio now remembers a selected local XMLTV source and refreshes only when requested. It checks the file fingerprint, retains the existing guide when reading or parsing fails, and rejects unexpectedly large reductions in programme count. Forget source removes the remembered local file location without discarding programme listings or channel links.
+
 ## Next: verify and remove friction
 
 Validate the installers and in-player interface on Windows and macOS. Check keyboard navigation, screen readers, high DPI, long paths and non-ASCII filenames. Confirm provider-format behaviour with authorised sample streams. Review the 1,000-item display cap and the 2 MiB input limit using measured timings before raising either. Add useful failures rather than optimistic status labels.
@@ -36,7 +40,7 @@ Plan favourites, recently viewed, multiple lists, custom collections, sorting, b
 
 ## Import and guides
 
-Studio has local M3U/M3U8 import and operating-system file choosers. Plan TXT import, drag and drop, watched folders and controlled automatic reload. Studio now has local XMLTV EPG ingestion, exact TVG ID matching, a searchable guide and a clearable offline cache with expiry status. Remote refresh, bulk mapping suggestions and broader XMLTV dialect support remain future work; manual ID linking is available in Studio. The native VLC extension still has no EPG panel.
+Studio has local M3U/M3U8 import and operating-system file choosers. Plan TXT import, drag and drop, watched folders and controlled automatic reload. Studio now has local XMLTV EPG ingestion, exact TVG ID matching, a searchable guide and a clearable offline cache with expiry status. Remote network fetching, scheduled refresh, bulk mapping suggestions and broader XMLTV dialect support remain future work; manual ID linking is available in Studio. The native VLC extension still has no EPG panel.
 
 ## A larger studio
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.8.0 — 10 November 2026
+
+- I added manual refreshing from the last selected local XMLTV file and a separate Forget source option.
+- I keep cached listings when the source has not changed or when a replacement is unreadable, invalid or unexpectedly small.
+- I now store the selected local source and its fingerprint in the private guide cache, with backward-compatible reading of older cache files.
+- I kept refresh operations explicit and local, without background requests or remote downloading.
+
+
 ## 3.7.0 — 10 November 2026
 
 - I added explicit per-library links between Studio channels and imported XMLTV IDs, with a searchable matching dialogue.
