@@ -229,19 +229,24 @@ function guideSummary(guide, now = Date.now()) {
   };
 }
 
-function searchGuide(guide, channels, query = '', windowDays = 2, now = Date.now()) {
+function searchGuide(guide, channels, query = '', windowDays = 2, now = Date.now(), mappings = {}) {
   if (!guide) return { results: [], matchedChannels: 0, unmatchedChannels: 0, more: false };
   if (!Array.isArray(channels) || channels.length > 20000) throw new Error('Too many channels in guide request.');
   if (typeof query !== 'string' || query.length > 120) throw new Error('Guide search is too long.');
   if (![2, 7].includes(windowDays)) throw new Error('Invalid guide window.');
   const available = new Map();
   let missing = 0;
+  let matched = 0;
   const known = new Set(guide.programmes.map(p => p.channelId));
   for (const channel of channels) {
-    if (typeof channel?.tvg_id !== 'string' || !channel.tvg_id.trim()) { missing++; continue; }
-    const id = channel.tvg_id.trim();
-    if (!known.has(id)) { missing++; continue; }
-    if (!available.has(id)) available.set(id, String(channel.name || id).slice(0, 250));
+    const override = typeof channel?.id === 'string' && Object.hasOwn(mappings, channel.id)
+      ? mappings[channel.id] : null;
+    const id = typeof override === 'string' ? override :
+      (typeof channel?.tvg_id === 'string' ? channel.tvg_id.trim() : '');
+    if (!id || !known.has(id)) { missing++; continue; }
+    matched++;
+    if (!available.has(id)) available.set(id, []);
+    available.get(id).push(String(channel.name || id).slice(0, 250));
   }
   const term = query.trim().toLocaleLowerCase();
   const horizon = now + windowDays * 86400000;
@@ -249,13 +254,17 @@ function searchGuide(guide, channels, query = '', windowDays = 2, now = Date.now
   let more = false;
   for (const item of guide.programmes) {
     if (item.start > horizon) break;
-    if (!available.has(item.channelId)) continue;
+    const names = available.get(item.channelId);
+    if (!names) continue;
     if (item.stop !== null ? item.stop <= now : item.start < now) continue;
     if (term && ![item.title, item.subtitle, item.description, item.category].join(' ').toLocaleLowerCase().includes(term)) continue;
-    if (results.length >= 120) { more = true; break; }
-    results.push({ ...item, channelName: available.get(item.channelId) });
+    for (const channelName of names) {
+      if (results.length >= 120) { more = true; break; }
+      results.push({ ...item, channelName });
+    }
+    if (more) break;
   }
-  return { results, matchedChannels: available.size, unmatchedChannels: missing, more };
+  return { results, matchedChannels: matched, unmatchedChannels: missing, more };
 }
 
 module.exports = {
