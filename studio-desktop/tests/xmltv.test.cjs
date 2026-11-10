@@ -85,3 +85,41 @@ test('guide import and queries reject oversized and invalid payloads', () => {
   assert.throws(() => searchGuide(guide, [], '', 365), /window/);
   assert.throws(() => searchGuide(guide, new Array(20001)), /Too many/);
 });
+
+
+test('a deliberate channel mapping takes precedence without changing the channel record', () => {
+  const guide = parseXmltv(schedule);
+  const now = Date.UTC(2026, 10, 10, 12, 30);
+  const channels = [{ id: 'local-1', name: 'Regional News', tvg_id: 'not-in-guide' }];
+  const overrides = { 'local-1': 'news.gb' };
+  const result = searchGuide(guide, channels, '', 2, now, overrides);
+  assert.equal(result.matchedChannels, 1);
+  assert.deepEqual(result.results.map(item => item.title), ['Lunch & News', 'Afternoon <briefing>']);
+  assert.equal(channels[0].tvg_id, 'not-in-guide');
+  assert.equal(searchGuide(guide, channels, '', 2, now).matchedChannels, 0);
+});
+
+test('obsolete overrides remain unmatched until corrected rather than silently falling back', () => {
+  const guide = parseXmltv(schedule);
+  const channels = [{ id: 'local-1', name: 'Regional News', tvg_id: 'news.gb' }];
+  const result = searchGuide(guide, channels, '', 2, Date.UTC(2026, 10, 10, 12), { 'local-1': 'retired.gb' });
+  assert.equal(result.matchedChannels, 0);
+  assert.equal(result.unmatchedChannels, 1);
+});
+
+test('shared guide IDs list each linked channel while preserving the result cap', () => {
+  const guide = parseXmltv(schedule);
+  const now = Date.UTC(2026, 10, 10, 12, 15);
+  const channels = [
+    { id: 'a', name: 'News Standard', tvg_id: 'news.gb' },
+    { id: 'b', name: 'News HD', tvg_id: '' }
+  ];
+  const results = searchGuide(guide, channels, '', 2, now, { b: 'news.gb' });
+  assert.equal(results.matchedChannels, 2);
+  assert.equal(results.unmatchedChannels, 0);
+  assert.deepEqual(results.results.filter(entry => entry.title === 'Lunch & News').map(entry => entry.channelName), ['News Standard', 'News HD']);
+  const many = Array.from({ length: 200 }, (_, i) => ({ id: 'id' + i, name: 'News ' + i, tvg_id: 'news.gb' }));
+  const limited = searchGuide(guide, many, '', 2, now);
+  assert.equal(limited.results.length, 120);
+  assert.equal(limited.more, true);
+});

@@ -13,6 +13,7 @@ const state = {
 };
 
 let guideInfo = null;
+let guideCatalogue = null;
 let guideRequest = 0;
 let guideTimer = null;
 
@@ -90,6 +91,7 @@ function render() {
     </tr>`;
   }).join('') : '<tr><td colspan="6" class="empty">No channels match this view.</td></tr>';
   refreshIcons();
+  $('#guide-map').disabled = !guideInfo || !state.library;
   queueGuideSearch();
 }
 
@@ -150,10 +152,90 @@ function commitEditor(event) {
 }
 
 
+function guideMapChannels() {
+  if (!guideCatalogue) return [];
+  const visible = new Set(visibleChannels().map(channel => channel.id));
+  return guideCatalogue.channels.filter(channel => visible.has(channel.id));
+}
+
+function renderGuideMapTargetOptions(preferred = null) {
+  const select = $('#guide-map-target');
+  const previous = preferred === null ? select.value : preferred;
+  const filter = $('#guide-map-target-filter').value.trim().toLocaleLowerCase();
+  select.replaceChildren();
+  if (!guideCatalogue) return;
+  const matches = guideCatalogue.guideChannels.filter(channel =>
+    !filter || (channel.name + ' ' + channel.id).toLocaleLowerCase().includes(filter)
+  ).slice(0, 120);
+  for (const item of matches) {
+    const option = document.createElement('option');
+    option.value = item.id;
+    option.textContent = item.name === item.id ? item.id : item.name + ' · ' + item.id;
+    select.append(option);
+  }
+  if (previous && matches.some(channel => channel.id === previous)) {
+    select.value = previous;
+  } else {
+    select.selectedIndex = -1;
+  }
+}
+
+function guideMapChannelChanged() {
+  if (!guideCatalogue) return;
+  const selected = guideCatalogue.channels.find(channel => channel.id === $('#guide-map-channel').value);
+  const details = $('#guide-map-info');
+  if (!selected) {
+    details.textContent = 'Search for a saved channel to link.';
+    $('#guide-map-remove').disabled = true;
+    $('#guide-map-target-filter').value = '';
+    renderGuideMapTargetOptions('');
+    return;
+  }
+  const mapped = Object.hasOwn(guideCatalogue.mappings, selected.id);
+  const mappedId = mapped ? guideCatalogue.mappings[selected.id] : '';
+  const exact = !mapped && guideCatalogue.guideChannels.some(channel => channel.id === selected.tvg_id)
+    ? selected.tvg_id : '';
+  const current = mappedId || exact;
+  details.textContent = mapped
+    ? 'Manual link: ' + mappedId + '. Remove link to use the original TVG ID again.'
+    : exact ? 'Already matched by TVG ID: ' + exact + '. No override is required.'
+      : 'No matching guide ID. Choose an XMLTV entry to create a separate link.';
+  $('#guide-map-remove').disabled = !mapped;
+  $('#guide-map-target-filter').value = current;
+  renderGuideMapTargetOptions(current);
+}
+
+function renderGuideMapChannelOptions() {
+  const select = $('#guide-map-channel');
+  const previous = select.value;
+  const filter = $('#guide-map-channel-filter').value.trim().toLocaleLowerCase();
+  select.replaceChildren();
+  const all = guideMapChannels()
+    .filter(channel => !filter ||
+      (channel.name + ' ' + channel.tvg_id).toLocaleLowerCase().includes(filter));
+  const ids = new Set(guideCatalogue?.guideChannels.map(channel => channel.id) || []);
+  all.sort((a, b) => {
+    const unresolved = channel => !ids.has(guideCatalogue.mappings[channel.id] || channel.tvg_id);
+    return Number(unresolved(b)) - Number(unresolved(a)) || a.name.localeCompare(b.name);
+  });
+  const matches = all.slice(0, 120);
+  for (const channel of matches) {
+    const option = document.createElement('option');
+    option.value = channel.id;
+    const mapped = Object.hasOwn(guideCatalogue.mappings, channel.id);
+    option.textContent = channel.name + (mapped ? ' · linked' : ids.has(channel.tvg_id) ? ' · exact' : ' · unmatched');
+    select.append(option);
+  }
+  if (matches.some(channel => channel.id === previous)) select.value = previous;
+  else select.selectedIndex = matches.length ? 0 : -1;
+  guideMapChannelChanged();
+}
+
 function showGuideInfo() {
   const badge = $('#guide-badge');
   if (!guideInfo) {
     badge.textContent = 'Not loaded';
+    $('#guide-map').disabled = true;
     $('#guide-status').textContent = 'Import a local XMLTV file to see programme listings.';
     $('#guide-results').replaceChildren();
     return;
@@ -161,6 +243,7 @@ function showGuideInfo() {
   const status = guideInfo.expired ? 'schedule ended' :
     guideInfo.old ? 'imported over seven days ago' : 'stored locally';
   badge.textContent = guideInfo.programmes.toLocaleString('en-GB') + ' listings · ' + status;
+  $('#guide-map').disabled = !state.library;
   $('#guide-status').textContent = 'Exact TVG ID matching. No automatic channel renaming or online refresh.';
 }
 
@@ -180,7 +263,8 @@ async function showGuideResults() {
     return;
   }
   const response = await window.studio.searchGuide({
-    channels: visibleChannels().map(channel => ({ name: channel.name, tvg_id: channel.tvg_id })),
+    library: state.library,
+    channels: visibleChannels().map(channel => ({ id: channel.id, name: channel.name, tvg_id: channel.tvg_id })),
     query: $('#guide-search').value,
     windowDays: Number($('#guide-window').value)
   });
@@ -230,10 +314,52 @@ $('#search').addEventListener('input', event => { state.search = event.target.va
 $('#guide-panel').addEventListener('toggle', queueGuideSearch);
 $('#guide-search').addEventListener('input', queueGuideSearch);
 $('#guide-window').addEventListener('change', queueGuideSearch);
+$('#guide-map').addEventListener('click', () => guarded(async () => {
+  if (!guideInfo) throw new Error('Import a programme guide first.');
+  if (!state.library) throw new Error('Open a saved channel library first.');
+  if (state.dirty) throw new Error('Save your channel edits before matching guide entries.');
+  const library = state.library;
+  const catalogue = await window.studio.guideCatalogue(library);
+  if (state.library !== library || state.dirty) return;
+  guideCatalogue = catalogue;
+  $('#guide-map-channel-filter').value = '';
+  $('#guide-map-target-filter').value = '';
+  renderGuideMapChannelOptions();
+  $('#guide-map-dialog').showModal();
+  $('#guide-map-channel-filter').focus();
+}));
+$('#guide-map-channel-filter').addEventListener('input', renderGuideMapChannelOptions);
+$('#guide-map-channel').addEventListener('change', guideMapChannelChanged);
+$('#guide-map-target-filter').addEventListener('input', () => renderGuideMapTargetOptions(''));
+$('#guide-map-cancel').addEventListener('click', () => $('#guide-map-dialog').close());
+$('#guide-map-form').addEventListener('submit', event => {
+  event.preventDefault();
+  guarded(async () => {
+    const channelId = $('#guide-map-channel').value;
+    const guideId = $('#guide-map-target').value;
+    if (!channelId || !guideId) throw new Error('Select both a library channel and an XMLTV entry.');
+    await window.studio.setGuideMapping({ library: state.library, channelId, guideId });
+    guideCatalogue.mappings[channelId] = guideId;
+    $('#guide-map-dialog').close();
+    queueGuideSearch();
+    say('Saved the guide link without changing the channel CSV.');
+  });
+});
+$('#guide-map-remove').addEventListener('click', () => guarded(async () => {
+  const channelId = $('#guide-map-channel').value;
+  if (!channelId || !Object.hasOwn(guideCatalogue?.mappings || {}, channelId)) return;
+  await window.studio.setGuideMapping({ library: state.library, channelId, guideId: null });
+  delete guideCatalogue.mappings[channelId];
+  renderGuideMapChannelOptions();
+  queueGuideSearch();
+  say('Removed the manual guide link. Original TVG ID matching is restored.');
+}));
+
 $('#guide-import').addEventListener('click', () => guarded(async () => {
   const info = await window.studio.importGuide();
   if (!info) return;
   guideInfo = info;
+  guideCatalogue = null;
   showGuideInfo();
   queueGuideSearch();
   say('Local XMLTV guide imported.');
@@ -243,6 +369,8 @@ $('#guide-clear').addEventListener('click', () => guarded(async () => {
   await window.studio.clearGuide();
   guideRequest++;
   guideInfo = null;
+  guideCatalogue = null;
+  if ($('#guide-map-dialog').open) $('#guide-map-dialog').close();
   showGuideInfo();
   say('Programme guide cache cleared.');
 }));

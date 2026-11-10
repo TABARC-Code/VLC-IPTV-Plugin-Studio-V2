@@ -18,7 +18,11 @@ Studio uses the **TVG ID** field in each channel record. The value must exactly 
 
 Names that merely look alike are deliberately left unmatched. This avoids pairing the wrong schedule with a similarly named regional channel.
 
-Open **Edit channel**, correct its TVG ID and save the library. The guide then uses that ID without rewriting any programme-guide records.
+You can correct the TVG ID in **Edit channel** and save the library, or use **Match channels** to link a saved channel to a different guide ID without altering its CSV. The manual link takes precedence while it exists. Select the saved channel and an exact entry from the imported XMLTV catalogue, then choose **Save link**. **Remove link** returns to ordinary TVG ID matching.
+
+The links are scoped to the currently selected library, stored in separate private files alongside the guide cache. They remain after importing a newer guide, so a discontinued guide ID may need to be changed or removed. Matching requires a saved library with no unsaved edits. The dialogue respects the current channel search and adult-visibility controls. It shows up to 120 choices in each list; narrow the search for larger libraries.
+
+Multiple local channel variants can deliberately share one guide ID. Their programme listings appear separately in search results, while the underlying schedule is stored only once.
 
 ## Search and availability
 
@@ -30,7 +34,7 @@ Studio warns when the schedule has run beyond its last programme or when its loc
 
 ## Cache and privacy
 
-Guide data is held in Studio's local `programme-guide/guide.json` file within its application data directory. Choose **Clear guide** to delete it. The cache stores programme descriptions and channel identifiers, not playlist credentials or the source file path.
+Guide data is held in Studio's local `programme-guide/guide.json` file within its application data directory. Choose **Clear guide** to delete it. The cache stores programme descriptions and channel identifiers, not playlist credentials or the source file path. Manual matching files store the library and channel identifiers as a filename digest and mapping entries; they do not hold stream URLs. Clearing the programme guide does not remove manual links, which can be cleared individually in the matching dialogue.
 
 The original XMLTV file is not modified, and no network connection is made for importing or searching the guide. Back up any guide files you need independently; replacing the cached guide replaces the previous schedule.
 

@@ -19,6 +19,8 @@ contextBridge.exposeInMainWorld('studio', Object.freeze({
   guideInfo: () => ipcRenderer.invoke('guide:info'),
   importGuide: () => ipcRenderer.invoke('guide:import'),
   searchGuide: request => ipcRenderer.invoke('guide:search', request),
+  guideCatalogue: library => ipcRenderer.invoke('guide:catalogue', library),
+  setGuideMapping: payload => ipcRenderer.invoke('guide:set-mapping', payload),
   clearGuide: () => ipcRenderer.invoke('guide:clear')
 }));
 

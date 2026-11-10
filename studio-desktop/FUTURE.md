@@ -9,7 +9,8 @@ This is a live list, not invented archaeology.
 - [x] Save-time revision checks and a five-copy library recovery history.
 - [ ] Drag-and-drop category reassignment.
 - [x] Local XMLTV EPG import with exact TVG ID matching, caching and expiry status.
-- [ ] Manual guide ID mapping and scheduled guide refresh.
+- [x] Manual per-library guide ID linking and removal.
+- [ ] Scheduled guide refresh and remote downloads.
 - [x] Non-destructive duplicate review by exact stream URL and guide ID.
 - [ ] Signed installers for supported platforms.
 - [ ] Optional Rust/Tauri shell after equivalent integration tests exist.
