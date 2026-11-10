@@ -16,6 +16,7 @@ let guideInfo = null;
 let guideCatalogue = null;
 let guideRequest = 0;
 let guideTimer = null;
+let guideBusy = false;
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -91,7 +92,7 @@ function render() {
     </tr>`;
   }).join('') : '<tr><td colspan="6" class="empty">No channels match this view.</td></tr>';
   refreshIcons();
-  $('#guide-map').disabled = !guideInfo || !state.library;
+  $('#guide-map').disabled = guideBusy || !guideInfo || !state.library;
   queueGuideSearch();
 }
 
@@ -233,9 +234,19 @@ function renderGuideMapChannelOptions() {
 
 function showGuideInfo() {
   const badge = $('#guide-badge');
+  const source = guideInfo?.source || null;
+  $('#guide-import').disabled = guideBusy;
+  $('#guide-refresh').disabled = guideBusy || !source;
+  $('#guide-forget').disabled = guideBusy || !source;
+  $('#guide-clear').disabled = guideBusy || !guideInfo;
+  $('#guide-map').disabled = guideBusy || !guideInfo || !state.library;
+  $('#guide-source').textContent = source
+    ? 'Remembered local file: ' + source.name + ' · loaded ' +
+      new Date(source.importedAt).toLocaleString('en-GB') +
+      '. Refresh only runs when you choose it.'
+    : 'No saved source. Import an XMLTV file to enable manual refreshing.';
   if (!guideInfo) {
     badge.textContent = 'Not loaded';
-    $('#guide-map').disabled = true;
     $('#guide-status').textContent = 'Import a local XMLTV file to see programme listings.';
     $('#guide-results').replaceChildren();
     return;
@@ -243,8 +254,19 @@ function showGuideInfo() {
   const status = guideInfo.expired ? 'schedule ended' :
     guideInfo.old ? 'imported over seven days ago' : 'stored locally';
   badge.textContent = guideInfo.programmes.toLocaleString('en-GB') + ' listings · ' + status;
-  $('#guide-map').disabled = !state.library;
-  $('#guide-status').textContent = 'Exact TVG ID matching. No automatic channel renaming or online refresh.';
+  $('#guide-status').textContent = 'Exact TVG ID matching. Guide refresh is local and manual.';
+}
+
+async function changeGuide(action) {
+  if (guideBusy) return;
+  guideBusy = true;
+  showGuideInfo();
+  try {
+    await action();
+  } finally {
+    guideBusy = false;
+    showGuideInfo();
+  }
 }
 
 function queueGuideSearch() {
@@ -355,25 +377,46 @@ $('#guide-map-remove').addEventListener('click', () => guarded(async () => {
   say('Removed the manual guide link. Original TVG ID matching is restored.');
 }));
 
-$('#guide-import').addEventListener('click', () => guarded(async () => {
+$('#guide-import').addEventListener('click', () => guarded(() => changeGuide(async () => {
   const info = await window.studio.importGuide();
   if (!info) return;
+  guideRequest++;
   guideInfo = info;
   guideCatalogue = null;
-  showGuideInfo();
+  if ($('#guide-map-dialog').open) $('#guide-map-dialog').close();
   queueGuideSearch();
-  say('Local XMLTV guide imported.');
-}));
-$('#guide-clear').addEventListener('click', () => guarded(async () => {
-  if (!guideInfo || !confirm('Delete the locally cached programme guide? Channel libraries will not change.')) return;
+  say('Local XMLTV guide imported. The file is remembered for manual refresh.');
+})));
+$('#guide-refresh').addEventListener('click', () => guarded(() => changeGuide(async () => {
+  if (!guideInfo?.source) return;
+  const result = await window.studio.refreshGuide();
+  guideRequest++;
+  guideInfo = result.info;
+  if (result.status === 'updated') {
+    guideCatalogue = null;
+    if ($('#guide-map-dialog').open) $('#guide-map-dialog').close();
+    queueGuideSearch();
+    say('The updated local XMLTV guide has been loaded.');
+  } else {
+    queueGuideSearch();
+    say('The XMLTV source is unchanged. Your stored listings have been kept.');
+  }
+})));
+$('#guide-forget').addEventListener('click', () => guarded(() => changeGuide(async () => {
+  if (!guideInfo?.source ||
+      !confirm('Forget the saved XMLTV file location? The cached listings and manual channel links will stay.')) return;
+  guideInfo = await window.studio.forgetGuideSource();
+  say('Saved source location forgotten. Programme listings are still available.');
+})));
+$('#guide-clear').addEventListener('click', () => guarded(() => changeGuide(async () => {
+  if (!guideInfo || !confirm('Delete the locally cached programme guide and remembered source? Channel libraries will not change.')) return;
   await window.studio.clearGuide();
   guideRequest++;
   guideInfo = null;
   guideCatalogue = null;
   if ($('#guide-map-dialog').open) $('#guide-map-dialog').close();
-  showGuideInfo();
-  say('Programme guide cache cleared.');
-}));
+  say('Programme guide cache and saved source cleared.');
+})));
 document.addEventListener('keydown', event => {
   if (event.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) { event.preventDefault(); $('#search').focus(); }
 });

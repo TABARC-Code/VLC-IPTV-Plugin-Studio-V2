@@ -87,14 +87,17 @@
         <summary>Programme guide <span id="guide-badge">Not loaded</span></summary>
         <div class="guide-controls">
           <button class="button primary" id="guide-import" type="button"><i data-lucide="file-up"></i>Import XMLTV</button>
+          <button class="button quiet" id="guide-refresh" type="button" disabled><i data-lucide="refresh-cw"></i>Refresh source</button>
           <input id="guide-search" type="search" placeholder="Find a programme" aria-label="Search programme titles and descriptions">
           <select id="guide-window" aria-label="Programme guide period">
             <option value="2">Next 48 hours</option>
             <option value="7">Next 7 days</option>
           </select>
           <button class="button quiet" id="guide-map" type="button" disabled>Match channels</button>
+          <button class="button quiet" id="guide-forget" type="button" disabled>Forget source</button>
           <button class="button quiet" id="guide-clear" type="button">Clear guide</button>
         </div>
+        <p class="hint" id="guide-source">No saved source. Import an XMLTV file to enable manual refreshing.</p>
         <p class="hint" id="guide-status" role="status" aria-live="polite">Import a local XMLTV file to see programme listings.</p>
         <div class="guide-results" id="guide-results" aria-label="Matching programme listings"></div>
       </details>

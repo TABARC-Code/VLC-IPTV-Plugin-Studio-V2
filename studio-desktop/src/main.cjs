@@ -12,7 +12,10 @@ const { MAX_CSV_BYTES, m3u, readChannels, writeChannels } = require('./core/chan
 const { parseM3u } = require('./core/m3u.cjs');
 const { importLibrary, listBackups, loadBackup, readLibrary, saveLibrary } = require('./core/library.cjs');
 const { duplicateCandidates } = require('./core/duplicates.cjs');
-const { importGuide, writeGuide, readGuide, clearGuide } = require('./core/guide-cache.cjs');
+const {
+  importGuideWithFingerprint, writeGuide, readGuideRecord,
+  refreshGuide, forgetGuideSource, clearGuide
+} = require('./core/guide-cache.cjs');
 const { guideSummary, searchGuide } = require('./core/xmltv.cjs');
 const { readMappings, setMapping } = require('./core/guide-mappings.cjs');
 const { cleanupOwnedPlaylists, createPrivatePlaylist, isTrustedRendererUrl, removePlaylist } = require('./core/runtime.cjs');
@@ -23,7 +26,8 @@ const rendererUrl = pathToFileURL(rendererPath).href;
 const activePlaylists = new Set();
 let window;
 let customVlcPath = null;
-let cachedGuide;
+let cachedRecord;
+let pendingGuideUpdate = Promise.resolve();
 const hasSingleInstanceLock = app.requestSingleInstanceLock();
 
 if (!hasSingleInstanceLock) app.quit();
@@ -64,9 +68,31 @@ function guideDir() {
   return path.join(app.getPath('userData'), 'programme-guide');
 }
 
+async function currentGuideRecord() {
+  if (cachedRecord === undefined) cachedRecord = await readGuideRecord(guideDir());
+  return cachedRecord;
+}
+
 async function currentGuide() {
-  if (cachedGuide === undefined) cachedGuide = await readGuide(guideDir());
-  return cachedGuide;
+  return (await currentGuideRecord())?.guide ?? null;
+}
+
+function guideStatus(record) {
+  if (!record) return null;
+  return {
+    ...guideSummary(record.guide),
+    source: record.source ? {
+      name: path.basename(record.source.path),
+      importedAt: record.source.importedAt
+    } : null
+  };
+}
+
+// These actions alter the same cache. Don't let a quick double-click reorder them.
+function withGuideUpdate(action) {
+  const task = pendingGuideUpdate.then(action);
+  pendingGuideUpdate = task.then(() => undefined, () => undefined);
+  return task;
 }
 
 function safeLibraryName(value) {
@@ -205,20 +231,31 @@ handleIpc('library:restore', async (_event, payload) => {
 
 handleIpc('library:duplicates', async (_event, channels) => duplicateCandidates(channels));
 
-handleIpc('guide:info', async () => guideSummary(await currentGuide()));
+handleIpc('guide:info', async () => guideStatus(await currentGuideRecord()));
 
-handleIpc('guide:import', async () => {
+handleIpc('guide:import', async () => withGuideUpdate(async () => {
   const result = await dialog.showOpenDialog(window, {
     title: 'Import a local XMLTV programme guide',
     properties: ['openFile'],
     filters: [{ name: 'XMLTV guide', extensions: ['xml', 'xmltv', 'gz'] }]
   });
   if (result.canceled) return null;
-  const parsed = await importGuide(result.filePaths[0]);
-  await writeGuide(guideDir(), parsed);
-  cachedGuide = parsed;
-  return guideSummary(parsed);
-});
+  const selected = await importGuideWithFingerprint(result.filePaths[0]);
+  await writeGuide(guideDir(), selected.guide, selected.source);
+  cachedRecord = selected;
+  return guideStatus(selected);
+}));
+
+handleIpc('guide:refresh', async () => withGuideUpdate(async () => {
+  const result = await refreshGuide(guideDir());
+  cachedRecord = result.record;
+  return { status: result.status, info: guideStatus(result.record) };
+}));
+
+handleIpc('guide:forget-source', async () => withGuideUpdate(async () => {
+  cachedRecord = await forgetGuideSource(guideDir());
+  return guideStatus(cachedRecord);
+}));
 
 handleIpc('guide:search', async (_event, payload) => {
   const library = payload?.library ? safeLibraryName(payload.library) : null;
@@ -255,11 +292,11 @@ handleIpc('guide:set-mapping', async (_event, payload) => {
   return true;
 });
 
-handleIpc('guide:clear', async () => {
+handleIpc('guide:clear', async () => withGuideUpdate(async () => {
   await clearGuide(guideDir());
-  cachedGuide = null;
+  cachedRecord = null;
   return true;
-});
+}));
 
 handleIpc('library:open-folder', async () => {
   await ensureLibrary();
