@@ -184,6 +184,8 @@ jobs:
             echo "No Studio assets found." >&2
             exit 1
           fi
+          sha256sum "${assets[@]}" | sed 's#studio-assets/##' > studio-assets/tabarc-studio-SHA256SUMS.txt
+          assets=(studio-assets/*)
           existing=$(gh release view "$tag" --json assets --jq '.assets[].name')
           for asset in "${assets[@]}"; do
             name=$(basename "$asset")
