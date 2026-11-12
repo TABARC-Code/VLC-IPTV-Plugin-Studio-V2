@@ -30,6 +30,10 @@ Studio now supports explicit per-library XMLTV channel links, including override
 
 Studio now remembers a selected local XMLTV source and refreshes only when requested. It checks the file fingerprint, retains the existing guide when reading or parsing fails, and rejects unexpectedly large reductions in programme count. Forget source removes the remembered local file location without discarding programme listings or channel links.
 
+## Added in 3.9.0
+
+Studio has independent desktop packaging targets for Windows, macOS and Linux. The package workflow checks the code and keeps those downloads separate from the native VLC extension. Developer signing and macOS notarisation remain future release work.
+
 ## Next: verify and remove friction
 
 Validate the installers and in-player interface on Windows and macOS. Check keyboard navigation, screen readers, high DPI, long paths and non-ASCII filenames. Confirm provider-format behaviour with authorised sample streams. Review the 1,000-item display cap and the 2 MiB input limit using measured timings before raising either. Add useful failures rather than optimistic status labels.

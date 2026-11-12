@@ -7,7 +7,7 @@ Let’s do this without jargon aerobics.
 1. **VLC**, installed from [videolan.org](https://www.videolan.org/vlc/).
 2. **A CSV file containing streams you are allowed to watch.** The app does not provide channels.
 
-If you downloaded a finished Studio release, open the application normally. If you downloaded the source code, install Node.js 20+, open a terminal in the folder, run `npm install`, then `npm start`.
+If you downloaded a finished Studio release, choose the installer for your operating system from the release page. Follow [DESKTOP-PACKAGES.md](docs/DESKTOP-PACKAGES.md) for the exact filenames and unsigned-build warnings. If you downloaded the source code instead, install Node.js 22+, open a terminal in this folder, run `npm ci`, then `npm start`.
 
 ## First opening
 

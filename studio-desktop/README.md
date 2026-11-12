@@ -2,7 +2,7 @@
 
 **A local-first channel organiser for people who want VLC to play the video and a calmer tool to manage the list.**
 
-Version **3.8.0** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
+Version **3.9.0** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
 
 No channels, subscriptions or access credentials are supplied. This is plumbing, not a pirate treasure map.
 
@@ -37,6 +37,12 @@ No channels, subscriptions or access credentials are supplied. This is plumbing,
 VLC’s Lua extension interface is useful but intentionally small: buttons, labels, text fields, lists and basic images. That is a poor fit for an accessible table editor with persistent libraries and compound filters. Studio therefore stays outside VLC, maintains ordinary CSV/M3U files, and leaves decoding, playback, volume and full-screen video to VLC.
 
 That boundary is boring in the best way. A playlist manager should not attempt to become a media engine merely because it has discovered ambition.
+
+## Desktop downloads
+
+Download the Windows, macOS or Linux Studio package from [release 3.9.0](https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/releases/tag/v3.9.0). These are unsigned builds, not independently certified installers. The exact package names, installation steps and platform warnings are in [DESKTOP-PACKAGES.md](docs/DESKTOP-PACKAGES.md).
+
+The older native extension ZIP is a separate product and doesn't install the desktop Studio. VLC remains responsible for playback.
 
 ## Run from source
 

@@ -10,3 +10,4 @@ VLC and the VLC cone are trademarks of VideoLAN. The cone is not bundled or imit
 
 Lucide interface icons are ISC licensed. See the dependency’s licence in an installed package or at <https://lucide.dev/license>.
 
+The macOS disk image uses icon sizes derived from the existing supplied PNG; I haven't replaced or redrawn the mark. These are unsigned application packages, not a signed claim of ownership.

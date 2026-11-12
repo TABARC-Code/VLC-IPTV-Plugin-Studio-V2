@@ -1,12 +1,12 @@
 # IPTV Channel Player V2
 
-**TABARC-Code · v3.8.0 · a native VLC Lua extension**
+**TABARC-Code · v3.9.0 · a native VLC Lua extension**
 
 This version opens inside VLC. It reads your channel CSV, lets you search or choose a group, and plays a selected stream using VLC's own player. Queue buttons add channels to the existing playlist. Python is not required to install or run this extension.
 
 I have kept the channel database separate from the code. Editing a television channel should take one spreadsheet row, not a small archaeological expedition through a script.
 
-Version 3.8.0 also includes the optional desktop Studio and Home Assistant camera bridge from 3.4.1. The native extension now adds country and language selectors built from the loaded CSV, closing a basic organisation gap without changing the file format. The Studio’s security and data-boundary protections remain intact.
+Version 3.9.0 also includes the optional desktop Studio and Home Assistant camera bridge from 3.4.1. The native extension now adds country and language selectors built from the loaded CSV, closing a basic organisation gap without changing the file format. The Studio’s security and data-boundary protections remain intact.
 
 Studio 3.5.2 retains earlier channel libraries when importing, detects edits made outside Studio before saving, and provides up to five local recovery copies per library. Its recovery interface is optional; the native VLC extension still runs independently.
 
@@ -15,6 +15,8 @@ Studio 3.6.0 adds an optional offline programme guide. Import a local XMLTV file
 Studio 3.7.0 can also link a saved channel to a different XMLTV identifier without changing the channel CSV. Links are kept locally for each library, and can be removed to restore normal TVG ID matching.
 
 Studio 3.8.0 remembers the selected local XMLTV file for manual refreshing. It checks whether the source changed before replacing the saved schedule, keeps the previous copy on failure and lets me forget the file location while retaining the guide.
+
+Studio 3.9.0 adds separate downloadable desktop packages for Windows, macOS and Linux. The native VLC extension ZIP stays available independently. Desktop packages are unsigned, so read the [installation and security notes](studio-desktop/docs/DESKTOP-PACKAGES.md) before running one.
 
 ## Guides
 

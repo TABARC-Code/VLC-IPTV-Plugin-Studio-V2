@@ -1,0 +1,37 @@
+appId: uk.tabarc.vlciptvstudio
+productName: TABARC VLC IPTV Studio
+asar: true
+compression: normal
+directories:
+  output: dist
+files:
+  - package.json
+  - src/**/*
+  - assets/**/*
+  - node_modules/lucide/dist/umd/lucide.js
+  - node_modules/lucide/LICENSE
+artifactName: tabarc-studio-${version}-${os}-${arch}.${ext}
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: assets/icon.ico
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+  icon: assets/icon.icns
+  category: public.app-category.video
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+  icon: assets/icon.png
+  category: Video
+  synopsis: Local IPTV channel library for VLC
+  description: Manage authorised IPTV channel lists and local XMLTV guides

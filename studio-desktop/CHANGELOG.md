@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.9.0 — 12 November 2026
+
+- I added standalone Studio desktop packages for Windows x64, macOS Intel and Apple Silicon, and Linux x64.
+- I added per-platform packaging checks, a shared release attachment step and checksums for the downloadable files.
+- I kept channel libraries and guide caches in the user's data directory, outside the installed application.
+- I documented unsigned releases and preserved the native VLC package as a separate download.
+
+
 ## 3.8.0 — 10 November 2026
 
 - I added manual refreshing from the last selected local XMLTV file and a separate Forget source option.

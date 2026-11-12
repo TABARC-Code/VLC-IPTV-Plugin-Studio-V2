@@ -5,7 +5,7 @@ on:
   pull_request:
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: native-release-${{ github.ref }}
   cancel-in-progress: false
@@ -63,7 +63,77 @@ jobs:
       - name: Home Assistant integration tests
         working-directory: integrations/home-assistant
         run: npm test
+  studio-packages:
+    name: Studio package (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: win
+          - os: macos-latest
+            target: mac
+          - os: ubuntu-latest
+            target: linux
+    defaults:
+      run:
+        working-directory: studio-desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: studio-desktop/package-lock.json
+      - name: Install locked application dependencies
+        run: npm ci --ignore-scripts
+      - name: Check Studio code and package inputs
+        run: |
+          npm test
+          npm run check
+          node scripts/check-package.cjs
+      - name: Prepare macOS artwork
+        if: runner.os == 'macOS'
+        shell: bash
+        run: sh scripts/make-mac-icon.sh
+      - name: Build desktop package
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx --yes electron-builder@26.18.1 --${{ matrix.target }} --publish never
+      - name: Confirm distributables exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          case "$RUNNER_OS" in
+            Windows) files=(dist/*.exe) ;;
+            macOS) files=(dist/*.dmg) ;;
+            Linux) files=(dist/*.AppImage) ;;
+            *) echo "Unknown platform" >&2; exit 1 ;;
+          esac
+          if (( ${#files[@]} == 0 )); then
+            echo "No desktop package was produced." >&2
+            exit 1
+          fi
+          for file in "${files[@]}"; do
+            case "$(basename "$file")" in tabarc-studio-*) ;; *) echo "Unexpected filename: $file" >&2; exit 1 ;; esac
+            test -s "$file"
+            echo "Built $(basename "$file")"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: studio-${{ matrix.target }}
+          path: |
+            studio-desktop/dist/*.exe
+            studio-desktop/dist/*.dmg
+            studio-desktop/dist/*.AppImage
+          if-no-files-found: error
+          retention-days: 14
+
   release:
+    permissions:
+      contents: write
     needs: [verify, installers, studio]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -89,3 +159,44 @@ jobs:
           gh release create "v$version" "$asset" --target "$GITHUB_SHA" \
             --title "IPTV Channel Player V2 — v$version" \
             --notes "Native VLC 3 Lua extension with CSV loading, filters, playback, queueing and M3U export. Extract the ZIP and read START HERE.txt. No Python runtime is required. Users supply authorised streams. See VALIDATION.md for platform and playback limits, and CHANGELOG.md for actual changes."
+
+  publish-studio:
+    permissions:
+      contents: write
+    name: Attach desktop packages
+    needs: [release, studio-packages]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: studio-*
+          path: studio-assets
+          merge-multiple: true
+      - name: Attach versioned desktop packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(tr -d '\r\n' < VERSION)
+          tag="v$version"
+          shopt -s nullglob
+          assets=(studio-assets/*)
+          if (( ${#assets[@]} == 0 )); then
+            echo "No Studio assets found." >&2
+            exit 1
+          fi
+          sha256sum "${assets[@]}" | sed 's#studio-assets/##' > studio-assets/tabarc-studio-SHA256SUMS.txt
+          assets=(studio-assets/*)
+          existing=$(gh release view "$tag" --json assets --jq '.assets[].name')
+          for asset in "${assets[@]}"; do
+            name=$(basename "$asset")
+            case "$name" in tabarc-studio-*) ;; *) echo "Unknown release asset: $name" >&2; exit 1 ;; esac
+            if grep -Fxq "$name" <<< "$existing"; then
+              echo "Retaining existing $name"
+              continue
+            fi
+            gh release upload "$tag" "$asset"
+          done
