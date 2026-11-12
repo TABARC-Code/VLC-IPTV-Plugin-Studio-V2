@@ -20,7 +20,7 @@ const { guideSummary, searchGuide } = require('./core/xmltv.cjs');
 const { readMappings, setMapping } = require('./core/guide-mappings.cjs');
 const { cleanupOwnedPlaylists, createPrivatePlaylist, isTrustedRendererUrl, removePlaylist } = require('./core/runtime.cjs');
 
-const VERSION = '3.8.0';
+const VERSION = '3.9.0';
 const rendererPath = path.join(__dirname, 'renderer', 'index.html');
 const rendererUrl = pathToFileURL(rendererPath).href;
 const activePlaylists = new Set();

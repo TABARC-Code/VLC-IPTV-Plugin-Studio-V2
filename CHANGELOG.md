@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.9.0 — 12 November 2026
+
+- I added a Windows desktop installer, macOS disk images for Intel and Apple Silicon, and a Linux AppImage for the Studio companion application.
+- I kept the native VLC extension's release package separate and added platform build and release-asset checks.
+- I used the existing TABARC artwork, kept library data outside the installed application and documented the unsigned-build limitations.
+
+
 ## 3.8.0 — 10 November 2026
 
 - I added a remembered local XMLTV source and a manual refresh option in Studio. No background download or scheduled network activity is involved.
