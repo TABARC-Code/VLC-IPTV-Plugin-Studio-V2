@@ -5,7 +5,7 @@ on:
   pull_request:
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: native-release-${{ github.ref }}
   cancel-in-progress: false
@@ -132,6 +132,8 @@ jobs:
           retention-days: 14
 
   release:
+    permissions:
+      contents: write
     needs: [verify, installers, studio]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -159,6 +161,8 @@ jobs:
             --notes "Native VLC 3 Lua extension with CSV loading, filters, playback, queueing and M3U export. Extract the ZIP and read START HERE.txt. No Python runtime is required. Users supply authorised streams. See VALIDATION.md for platform and playback limits, and CHANGELOG.md for actual changes."
 
   publish-studio:
+    permissions:
+      contents: write
     name: Attach desktop packages
     needs: [release, studio-packages]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
