@@ -11,13 +11,13 @@ Use the [V3.9.0 release](https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V
 | Windows 64-bit | `tabarc-studio-3.9.0-win-x64.exe` | Open the setup executable, choose the installation folder and complete the wizard |
 | macOS Intel | `tabarc-studio-3.9.0-mac-x64.dmg` | Open the disk image and move Studio into Applications |
 | macOS Apple Silicon | `tabarc-studio-3.9.0-mac-arm64.dmg` | Open the disk image and move Studio into Applications |
-| Linux 64-bit | `tabarc-studio-3.9.0-linux-x64.AppImage` | Make the file executable and run it |
+| Linux 64-bit | `tabarc-studio-3.9.0-linux-x86_64.AppImage` | Make the file executable and run it |
 
 On Linux, for example:
 
 ```sh
-chmod +x tabarc-studio-3.9.0-linux-x64.AppImage
-./tabarc-studio-3.9.0-linux-x64.AppImage
+chmod +x tabarc-studio-3.9.0-linux-x86_64.AppImage
+./tabarc-studio-3.9.0-linux-x86_64.AppImage
 ```
 
 AppImage may need FUSE support on some Linux distributions. The package does not install VLC or supply streaming channels.
