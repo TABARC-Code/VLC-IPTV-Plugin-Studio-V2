@@ -129,6 +129,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb
           test -x dist/linux-unpacked/tabarc-vlc-iptv-studio
+          sudo chown root:root dist/linux-unpacked/chrome-sandbox
+          sudo chmod 4755 dist/linux-unpacked/chrome-sandbox
+          test "$(stat -c '%u:%a' dist/linux-unpacked/chrome-sandbox)" = '0:4755'
           timeout 45s xvfb-run -a dist/linux-unpacked/tabarc-vlc-iptv-studio --check-install --disable-gpu
       - uses: actions/upload-artifact@v4
         with:
