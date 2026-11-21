@@ -121,6 +121,15 @@ jobs:
             test -s "$file"
             echo "Built $(basename "$file")"
           done
+      - name: Open the packaged Studio window
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          test -x dist/linux-unpacked/tabarc-vlc-iptv-studio
+          timeout 45s xvfb-run -a dist/linux-unpacked/tabarc-vlc-iptv-studio --check-install --disable-gpu
       - uses: actions/upload-artifact@v4
         with:
           name: studio-${{ matrix.target }}
