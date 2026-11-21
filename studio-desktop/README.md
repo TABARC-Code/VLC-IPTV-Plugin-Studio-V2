@@ -2,7 +2,7 @@
 
 **A local-first channel organiser for people who want VLC to play the video and a calmer tool to manage the list.**
 
-Version **3.9.0** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
+Version **3.9.1** builds on the V2 foundation by [TABARC-Code](https://github.com/TABARC-Code). It imports and edits channel CSV files, filters by category and country, keeps adult-labelled rows out of sight by default, exports standard M3U playlists and hands the visible selection to an installed copy of VLC.
 
 No channels, subscriptions or access credentials are supplied. This is plumbing, not a pirate treasure map.
 
@@ -40,9 +40,11 @@ That boundary is boring in the best way. A playlist manager should not attempt t
 
 ## Desktop downloads
 
-Download the Windows, macOS or Linux Studio package from [release 3.9.0](https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/releases/tag/v3.9.0). These are unsigned builds, not independently certified installers. The exact package names, installation steps and platform warnings are in [DESKTOP-PACKAGES.md](docs/DESKTOP-PACKAGES.md).
+Download the Windows, macOS or Linux Studio package from [release 3.9.1](https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/releases/tag/v3.9.1). These are unsigned builds, not independently certified installers. The exact package names, installation steps and platform warnings are in [DESKTOP-PACKAGES.md](docs/DESKTOP-PACKAGES.md).
 
 The older native extension ZIP is a separate product and doesn't install the desktop Studio. VLC remains responsible for playback.
+
+The Linux desktop build is also opened under a temporary profile before release. This checks the packaged interface files and preload bridge; it does not claim that every Linux distribution or VLC stream has been tested.
 
 ## Run from source
 

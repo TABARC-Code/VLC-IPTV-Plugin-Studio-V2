@@ -8,7 +8,7 @@ permissions:
   contents: read
 concurrency:
   group: native-release-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -121,6 +121,18 @@ jobs:
             test -s "$file"
             echo "Built $(basename "$file")"
           done
+      - name: Open the packaged Studio window
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          test -x dist/linux-unpacked/tabarc-vlc-iptv-studio
+          sudo chown root:root dist/linux-unpacked/chrome-sandbox
+          sudo chmod 4755 dist/linux-unpacked/chrome-sandbox
+          test "$(stat -c '%u:%a' dist/linux-unpacked/chrome-sandbox)" = '0:4755'
+          timeout 45s xvfb-run -a dist/linux-unpacked/tabarc-vlc-iptv-studio --check-install --disable-gpu
       - uses: actions/upload-artifact@v4
         with:
           name: studio-${{ matrix.target }}

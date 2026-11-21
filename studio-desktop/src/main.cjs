@@ -20,7 +20,7 @@ const { guideSummary, searchGuide } = require('./core/xmltv.cjs');
 const { readMappings, setMapping } = require('./core/guide-mappings.cjs');
 const { cleanupOwnedPlaylists, createPrivatePlaylist, isTrustedRendererUrl, removePlaylist } = require('./core/runtime.cjs');
 
-const VERSION = '3.9.0';
+const VERSION = '3.9.1';
 const rendererPath = path.join(__dirname, 'renderer', 'index.html');
 const rendererUrl = pathToFileURL(rendererPath).href;
 const activePlaylists = new Set();
@@ -28,6 +28,9 @@ let window;
 let customVlcPath = null;
 let cachedRecord;
 let pendingGuideUpdate = Promise.resolve();
+const installCheck = process.argv.includes('--check-install');
+const checkProfile = installCheck ? fsSync.mkdtempSync(path.join(os.tmpdir(), 'tabarc-studio-check-')) : null;
+if (checkProfile) app.setPath('userData', checkProfile);
 const hasSingleInstanceLock = app.requestSingleInstanceLock();
 
 if (!hasSingleInstanceLock) app.quit();
@@ -137,6 +140,7 @@ async function createWindow() {
     height: 820,
     minWidth: 960,
     minHeight: 640,
+    show: !installCheck,
     backgroundColor: '#101314',
     icon: path.join(__dirname, '..', 'assets', 'icon.png'),
     title: `TABARC VLC IPTV Studio ${VERSION}`,
@@ -340,12 +344,60 @@ handleIpc('playlist:export', async (_event, payload) => {
   return { path: result.filePath };
 });
 
+async function checkPackagedWindow() {
+  // Use an isolated temporary profile. A packaged check should never touch real libraries.
+  const details = await window.webContents.executeJavaScript(`
+    (async () => {
+      if (!window.studio || typeof window.studio.appInfo !== 'function') {
+        throw new Error('The Studio preload bridge is missing.');
+      }
+      const info = await window.studio.appInfo();
+      if (typeof window.lucide?.createIcons !== 'function') {
+        throw new Error('The bundled interface icons did not load.');
+      }
+      if (!document.querySelector('#channel-rows') || !document.querySelector('#guide-panel')) {
+        throw new Error('An essential Studio view is missing.');
+      }
+      if (![...document.styleSheets].some(sheet => (sheet.href || '').endsWith('/styles.css'))) {
+        throw new Error('The Studio stylesheet did not load.');
+      }
+      const logo = document.querySelector('.brand img');
+      if (!logo) throw new Error('The Studio logo is missing.');
+      await logo.decode();
+      return { version: info.version, logoWidth: logo.naturalWidth };
+    })()
+  `);
+  if (details.version !== VERSION || details.logoWidth < 1 || !app.isPackaged) {
+    throw new Error('Packaged Studio metadata or artwork is inconsistent.');
+  }
+  process.stdout.write('Studio packaged window, IPC, stylesheet, icons and artwork loaded.\n');
+}
+
 app.whenReady().then(async () => {
   if (!hasSingleInstanceLock) return;
-  await cleanupOwnedPlaylists(os.tmpdir());
-  await ensureLibrary();
-  await createWindow();
-  app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
+  try {
+    if (!installCheck) await cleanupOwnedPlaylists(os.tmpdir());
+    await ensureLibrary();
+    await createWindow();
+    if (installCheck) {
+      try {
+        await checkPackagedWindow();
+        process.exitCode = 0;
+      } catch (error) {
+        process.stderr.write((error.stack || String(error)) + '\n');
+        process.exitCode = 1;
+      } finally {
+        if (checkProfile) fsSync.rmSync(checkProfile, { recursive: true, force: true });
+        app.exit(process.exitCode);
+      }
+      return;
+    }
+    app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
+  } catch (error) {
+    process.stderr.write((error.stack || String(error)) + '\n');
+    if (checkProfile) fsSync.rmSync(checkProfile, { recursive: true, force: true });
+    app.exit(1);
+  }
 });
 
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
