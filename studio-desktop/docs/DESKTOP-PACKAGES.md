@@ -4,20 +4,20 @@ Studio is a separate desktop channel organiser. The native VLC extension remains
 
 ## Download the right file
 
-Use the [V3.9.0 release](https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/releases/tag/v3.9.0) and choose the file for your system.
+Use the [V3.9.1 release](https://github.com/TABARC-Code/VLC-IPTV-Plugin-Studio-V2/releases/tag/v3.9.1) and choose the file for your system.
 
 | System | Package | Installation |
 | --- | --- | --- |
-| Windows 64-bit | `tabarc-studio-3.9.0-win-x64.exe` | Open the setup executable, choose the installation folder and complete the wizard |
-| macOS Intel | `tabarc-studio-3.9.0-mac-x64.dmg` | Open the disk image and move Studio into Applications |
-| macOS Apple Silicon | `tabarc-studio-3.9.0-mac-arm64.dmg` | Open the disk image and move Studio into Applications |
-| Linux 64-bit | `tabarc-studio-3.9.0-linux-x86_64.AppImage` | Make the file executable and run it |
+| Windows 64-bit | `tabarc-studio-3.9.1-win-x64.exe` | Open the setup executable, choose the installation folder and complete the wizard |
+| macOS Intel | `tabarc-studio-3.9.1-mac-x64.dmg` | Open the disk image and move Studio into Applications |
+| macOS Apple Silicon | `tabarc-studio-3.9.1-mac-arm64.dmg` | Open the disk image and move Studio into Applications |
+| Linux 64-bit | `tabarc-studio-3.9.1-linux-x86_64.AppImage` | Make the file executable and run it |
 
 On Linux, for example:
 
 ```sh
-chmod +x tabarc-studio-3.9.0-linux-x86_64.AppImage
-./tabarc-studio-3.9.0-linux-x86_64.AppImage
+chmod +x tabarc-studio-3.9.1-linux-x86_64.AppImage
+./tabarc-studio-3.9.1-linux-x86_64.AppImage
 ```
 
 AppImage may need FUSE support on some Linux distributions. The package does not install VLC or supply streaming channels.
@@ -27,6 +27,8 @@ AppImage may need FUSE support on some Linux distributions. The package does not
 These packages are **not code-signed or notarised**. Windows SmartScreen or macOS Gatekeeper may warn or block the first launch. An unsigned release is not proof that a file is unsafe, but it also offers no publisher identity guarantee. Only use the exact assets from the repository's releases and verify the supplied SHA-256 checksums.
 
 The release pipeline builds on native GitHub-hosted Windows, macOS and Linux runners. It runs the code and regression checks before packaging. That is not a substitute for an independent security audit or hands-on playback on your system.
+
+The Linux release runner now opens the packaged application under a temporary profile to check bundled window resources and the preload bridge. This is a focused launch check, not a substitute for installing and trying playback on your own machine.
 
 ## Retaining libraries and settings
 
@@ -45,4 +47,4 @@ npm run check
 npm start
 ```
 
-The native VLC extension works independently of Studio. Do not confuse `iptv-channel-player-native-v3.9.0.zip` with one of the desktop installers.
+The native VLC extension works independently of Studio. Do not confuse `iptv-channel-player-native-v3.9.1.zip` with one of the desktop installers.

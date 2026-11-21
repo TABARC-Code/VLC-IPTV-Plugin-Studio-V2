@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.9.1 — 21 November 2026
+
+- I added a packaged Linux window check that opens the real Electron application with a temporary user profile.
+- I check that the bundled preload bridge, stylesheet, interface icons and existing artwork load from the installed application.
+- I made the Linux executable name explicit so the packaged check targets the correct binary.
+
+
 ## 3.9.0 — 12 November 2026
 
 - I added a Windows desktop installer, macOS disk images for Intel and Apple Silicon, and a Linux AppImage for the Studio companion application.

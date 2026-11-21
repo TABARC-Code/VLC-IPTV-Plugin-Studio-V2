@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.9.1 — 21 November 2026
+
+- I added a packaged-window check to the Linux release build. It starts an isolated Studio instance and checks the renderer, app information, stylesheet, icons and logo.
+- I kept the check away from existing channel libraries and guide data, and set a fixed Linux executable name for packaging.
+
+
 ## 3.9.0 — 12 November 2026
 
 - I added standalone Studio desktop packages for Windows x64, macOS Intel and Apple Silicon, and Linux x64.
